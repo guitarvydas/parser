@@ -1,0 +1,37 @@
+Matcher {
+    MatcherStatement = Statement+
+    Statement = (ClearStatement | Query | Rule | Fact) ";"
+    
+    ClearStatement = "clear"
+    Rule = Head "=" (Body "|")* Body
+    Fact = Head
+    Query = "query" "(" MatchExpression ")"
+
+    Subject = Primary
+    Object = Primary
+
+    Head = BinaryHead | UnaryHead | NonaryHead
+    BinaryHead = identifier "(" Formal "," Formal ")"
+    UnaryHead = identifier "(" Formal ")"
+    NonaryHead = identifier
+    Body = MatchExpression
+
+    Formal = BinaryFunctor | UnaryFunctor | NonaryFunctor | logicVariable | identifier
+    MatchExpression = MatchFactor
+    MatchFactor = (MatchAtom "&")*  MatchAtom
+    MatchAtom = Keyword | BinaryFunctor | UnaryFunctor | NonaryFunctor
+    Keyword = kwCut | kwSucceed | kwFail
+    kwCut = "cut"
+    kwSucceed = "succeed"
+    kwFail = "fail"
+    BinaryFunctor = identifier "(" Primary "," Primary ")"
+    UnaryFunctor = identifier "(" Primary ")"
+    NonaryFunctor = identifier
+    Primary = identifier | logicVariable
+    identifier = lowerCaseLetter identLetter*
+    logicVariable = upperCaseLetter identLetter*
+    lowerCaseLetter = "a" .. "z"
+    upperCaseLetter = "A" .. "Z"
+    identLetter = lowerCaseLetter | upperCaseLetter | "0" .. "9" | "_" | "-"
+
+}

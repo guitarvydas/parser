@@ -1,0 +1,7 @@
+clear;
+line(a);
+line(b);
+line(c);
+eq(X,X) = succeed;
+neq(X,Y) = eq(X,Y) & cut & fail | succeed;
+query(line(X) & line(Y) & neq(X,Y));
