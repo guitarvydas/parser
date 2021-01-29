@@ -1,7 +1,9 @@
 var fs = require ('fs');
 var ohm = require ('ohm-js');
 
-function main (grammarPath) {
+function main () {
+    var argv = process.argv.slice (1);
+    grammarPath = argv [1];
     var grammarSource = fs.readFileSync (grammarPath, 'utf8');
     var sclSource = fs.readFileSync (0, 'utf-8');  // SCL <== DSL but more specific
     var grammar = ohm.grammar (grammarSource);
@@ -19,4 +21,4 @@ function main (grammarPath) {
     };
 }
 
-main ('ohm.ohm');
+main ();
