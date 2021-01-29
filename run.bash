@@ -4,6 +4,4 @@
 # npm install fs
 #
 cat parser.js semantics.js >combined.js
-node combined.js <test.scl >temp.js
-node idents <temp.js
-
+node combined.js <test.scl | node idents | node viz
