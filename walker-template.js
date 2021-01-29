@@ -15,33 +15,43 @@ function spaces (depth) {
     return s;
 }
 
+function rewrite (tree, depth) {
+    return { rewritten: false, tree: null };
+}
+
 function walk (depth, obj) {
     var s;
     if (obj) {
-      if (Array.isArray (obj)) {
-	  if (0 < obj.length) {
-	      return obj.map (x => { walk (depth, x) }).join ('');
-	  } else {
-	      return "";
-	  }
-      } else if (obj.node === "_terminal") {
-	  s = spaces (depth);
-	  return `${s}"${obj.primitiveValue}"`;
-      } else {
-	  var spc = `${spaces (depth)}`;
-	  s = `${spc}${obj.node}`;
-	  if (obj.children) {
-	      var arr = obj.children.map (x => { return walk (depth + 1, x); });
-	      return `${spc}${obj.node}\n${arr.join ('\n')}`;
-	  } else {
-	      return `${s}`;
-	  }
-      }
+	if (Array.isArray (obj)) {
+	    if (0 < obj.length) {
+		return obj.map (x => { walk (depth, x) }).join ('');
+	    } else {
+		return "";
+	    }
+	} else {
+	    var rw = rewrite (obj, depth);
+	    if (rw.rewritten) {
+		return (rw.tree);
+	    } else {
+		if (obj.node === "_terminal") {
+		    s = spaces (depth);
+		    return `${s}"${obj.primitiveValue}"`;
+		} else {
+		    var spc = `${spaces (depth)}`;
+		    s = `${spc}${obj.node}`;
+		    if (obj.children) {
+			var arr = obj.children.map (x => { return walk (depth + 1, x); });
+			return `${spc}${obj.node}\n${arr.join ('\n')}`;
+		    } else {
+			return `${s}`;
+		    }
+		}
+	    }
+	}
     } else {
 	return "";
     }
 }
-
 
 var tree = readJSONFromStdin ();
 var code = walk (0, tree);

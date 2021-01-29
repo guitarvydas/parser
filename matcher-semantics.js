@@ -8,40 +8,42 @@ function readJSONFromStdin () {
 
 function spaces (depth) {
     var i;
+    var s = "";
     for (i = 0 ; i < depth ; i += 1) {
-	process.stdout.write (' ');
+	s = s + ' ';
     }
+    return s;
 }
 
-function emit (depth, obj) {
+function walk (depth, obj) {
+    var s;
     if (obj) {
       if (Array.isArray (obj)) {
 	  if (0 < obj.length) {
-	      obj.forEach (x => { emit (depth, x) });
+	      return obj.map (x => { walk (depth, x) }).join ('');
+	  } else {
+	      return "";
 	  }
       } else if (obj.node === "_terminal") {
-	  spaces (depth);
-	  process.stdout.write (obj.primitiveValue + '\n');
-      } else if (obj.node === "kw") {
-	  spaces (depth);
-	  process.stdout.write (`kw[${obj.value}]\n`);
-      } else if (obj.node === "literal") {
-	  spaces (depth);
-	  process.stdout.write (`[${obj.value}]\n`);
-      } else if (obj.node === "logicVar") {
-	  spaces (depth);
-	  process.stdout.write (`lv[${obj.value}]\n`);
+	  s = spaces (depth);
+	  return `${s}${obj.primitiveValue}\n`;
       } else {
-	  spaces (depth);
-	  process.stdout.write (obj.node + '\n');
+	  var spc = `${spaces (depth)}`;
+	  s = `${spc}${obj.node}`;
 	  if (obj.children) {
-	      obj.children.forEach (x => { emit (depth + 1, x); });
+	      var arr = obj.children.map (x => { return walk (depth + 1, x); });
+	      return `${spc}${obj.node}\n${arr.join ('')}`;
+	  } else {
+	      return `${s}`;
 	  }
       }
+    } else {
+	return "";
     }
 }
 
 
 var tree = readJSONFromStdin ();
-emit (0, tree);
-console.log ('done');
+var code = walk (0, tree);
+console.log (code);
+console.log ('emitter done');
