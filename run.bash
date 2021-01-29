@@ -3,6 +3,7 @@
 # npm install ohm-js
 # npm install fs
 #
-cat parser.js semantics.js >combined.js
-node combined.js ohm.ohm <test.scl | node viz
-node combined.js ohm.ohm <test.scl | node idents | node viz
+cat parser.js semantics.js >_parser.js
+node _parser.js ohm.ohm <matcher.scl | node viz
+node _parser.js ohm.ohm <matcher.scl | node idents | node viz
+node _parser.js ohm.ohm <matcher.scl | node idents | node matcher-semantics
