@@ -5,5 +5,5 @@
 #
 cat parser.js semantics.js >combined.js
 node combined.js <test.scl >temp.js
-node pass2 <temp.js
+node idents <temp.js
 

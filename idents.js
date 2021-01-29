@@ -113,5 +113,6 @@ function rewrite (obj) {
 
 var jobj = readJSONFromStdin ();
 var rw = rewrite (jobj);
-unparse (0, rw);
-console.log ('done');
+//unparse (0, rw);
+console.log (JSON.stringify (rw));
+//console.log ('done');
