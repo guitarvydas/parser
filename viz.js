@@ -8,40 +8,51 @@ function readJSONFromStdin () {
 
 function spaces (depth) {
     var i;
+    var s = "";
     for (i = 0 ; i < depth ; i += 1) {
-	process.stdout.write (' ');
+	s = s + ' ';
     }
+    return s;
 }
 
 function unparse (depth, obj) {
+    var s;
     if (obj) {
       if (Array.isArray (obj)) {
 	  if (0 < obj.length) {
-	      obj.forEach (x => { unparse (depth, x) });
+	      return obj.map (x => { unparse (depth, x) }).join ('');
+	  } else {
+	      return "";
 	  }
       } else if (obj.node === "_terminal") {
-	  spaces (depth);
-	  process.stdout.write (obj.primitiveValue + '\n');
+	  s = spaces (depth);
+	  return `${s}${obj.primitiveValue}\n`;
       } else if (obj.node === "kw") {
-	  spaces (depth);
-	  process.stdout.write (`kw[${obj.value}]\n`);
+	  s = spaces (depth);
+	  return `${s}kw[${obj.value}]\n`;
       } else if (obj.node === "literal") {
-	  spaces (depth);
-	  process.stdout.write (`[${obj.value}]\n`);
+	  s = spaces (depth);
+	  return `${s}[${obj.value}]\n`;
       } else if (obj.node === "logicVar") {
-	  spaces (depth);
-	  process.stdout.write (`lv[${obj.value}]\n`);
+	  s = spaces (depth);
+	  return `${s}lv[${obj.value}]\n`;
       } else {
-	  spaces (depth);
-	  process.stdout.write (obj.node + '\n');
+	  var spc = `${spaces (depth)}`;
+	  s = `${spc}${obj.node}`;
 	  if (obj.children) {
-	      obj.children.forEach (x => { unparse (depth + 1, x); });
+	      var arr = obj.children.map (x => { return unparse (depth + 1, x); });
+	      return `${spc}${obj.node}\n${arr.join ('')}`;
+	  } else {
+	      return `${s}`;
 	  }
       }
+    } else {
+	return "[3]";
     }
 }
 
 
 var tree = readJSONFromStdin ();
-unparse (0, tree);
+var str = unparse (0, tree);
+console.log (str);
 console.log ('done');
