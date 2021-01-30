@@ -11,7 +11,7 @@ function readJSONFromStdin () {
 function rewrite (obj, depth) {
     if (obj.node === "identifier") {
 	var str = concatenateIdentToString (obj);
-	return { node: "ident", value: str };
+	return { node: "ident", children: [str] };
     } else {
 	return null;
     }

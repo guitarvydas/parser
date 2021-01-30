@@ -13,7 +13,7 @@ function getTerminal (obj) {
 	} else {
 	    return obj.map (x => getTerminal (x)).join ('');
 	}
-    } else if (obj.node === "_terminal") {
+    } else if (obj.node === "_leaf") {
 	return obj.value;
     } else {
 	return obj.children.map (x => getTerminal (x)).join ('');
@@ -35,7 +35,7 @@ function walk_identifiers_and_logicVariables (obj) {
 	} else {
 	    return [ obj.forEach (x => {  return walk_identifiers_and_logicVariables (x) }) ];
 	}
-    } else if (obj.node === "_terminal") {
+    } else if (obj.node === "_leaf") {
 	return obj;
     } else if (obj.node === "Keyword") {
 	var str = concatenateIdentToString (obj);
