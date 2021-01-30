@@ -25,7 +25,7 @@ function unparse (depth, obj) {
 	  } else {
 	      return "";
 	  }
-      } else if (obj.node === "_leaf") {
+      } else if (isLeafNode (obj)) {
 	  s = spaces (depth);
 	  return `${s}"${obj.value}"`;
       } else {
