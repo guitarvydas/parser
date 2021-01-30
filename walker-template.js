@@ -23,14 +23,10 @@ function walk (obj, depth) {
 	  if (rw) {
 	      return rw;
 	  } else {
-	      if (Array.isArray (obj.children)) {
-		  return { node: obj.node, children: obj.children.map (x => { return walk (x, depth + 1); }) };
-	      } else if (obj.children) {
-		  return { node: obj.node, children: obj.children };
-	      } else if (obj.value) {
-		  return { node: obj.node, value: obj.value };
+	      if (isCompositeNode (obj)) {
+		  return new CompositeNode (obj.node, obj.children.map (x => {return walk (x, depth + 1)}));
 	      } else {
-		  return { node: obj.node, children: [] };
+		  return obj;
 	      }
 	  }
       }
