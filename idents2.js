@@ -56,17 +56,17 @@ console.log (JSON.stringify (rw));
 
 
 /// utilities
-function getTerminal (obj) {
+function getValue (obj) {
     if (Array.isArray (obj)) {
 	if (0 >= obj.length) {
 	    return "";
 	} else {
-	    return obj.map (x => getTerminal (x)).join ('');
+	    return obj.map (x => getValue (x)).join ('');
 	}
-    } else if (obj.node === "_terminal") {
+    } else if (obj.node === "_leaf") {
 	return obj.value;
     } else {
-	return obj.children.map (x => getTerminal (x)).join ('');
+	return obj.children.map (x => getValue (x)).join ('');
     }
 }
 
@@ -80,6 +80,6 @@ function concatenateIdentToString (obj) {
     } else {
 	str = "";
     };
-    str = str + obj.children.map (x => { return getTerminal (x); }).join ('');
+    str = str + obj.children.map (x => { return getValue (x); }).join ('');
     return str;
 }
