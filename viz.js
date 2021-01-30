@@ -25,18 +25,9 @@ function unparse (depth, obj) {
 	  } else {
 	      return "";
 	  }
-      } else if (obj.node === "_terminal") {
+      } else if (obj.node === "_leaf") {
 	  s = spaces (depth);
 	  return `${s}"${obj.value}"`;
-      } else if (obj.node === "kw") {
-	  s = spaces (depth);
-	  return `${s}kw[${obj.value}]`;
-      } else if (obj.node === "literal") {
-	  s = spaces (depth);
-	  return `${s}[${obj.value}]`;
-      } else if (obj.node === "logicVar") {
-	  s = spaces (depth);
-	  return `${s}lv[${obj.value}]`;
       } else {
 	  var spc = `${spaces (depth)}`;
 	  s = `${spc}${obj.node}`;
