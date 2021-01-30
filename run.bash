@@ -4,7 +4,10 @@
 # npm install fs
 #
 cat parser.js semantics.js >_parser.js
-node _parser.js ohm.ohm <matcher.scl >temp.out # node --inspect viz <temp.out
+node _parser.js ohm.ohm <matcher.scl >temp.json #? node --inspect viz <temp.json
+echo
+echo '0----------'
+echo
 node _parser.js ohm.ohm <matcher.scl | node viz
 echo
 echo '1----------'
@@ -13,4 +16,17 @@ node _parser.js ohm.ohm <matcher.scl | node idents | node viz
 echo
 echo '2----------'
 echo
-node _parser.js ohm.ohm <matcher.scl | node idents | node walker-template
+node _parser.js ohm.ohm <matcher.scl | node walker-template | node viz
+echo
+echo '3----------'
+echo
+node _parser.js ohm.ohm <matcher.scl | node idents | node walker-template | node viz
+echo
+echo '4----------'
+echo
+node _parser.js ohm.ohm <matcher.scl | node walker-template | node viz
+# node _parser.js ohm.ohm <matcher.scl | node idents2 | node viz
+
+
+#
+# .text

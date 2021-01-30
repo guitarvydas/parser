@@ -5,55 +5,41 @@ function readJSONFromStdin () {
     const obj = JSON.parse (jsonText);
     return obj;
 }
-
-function spaces (depth) {
-    var i;
-    var s = "";
-    for (i = 0 ; i < depth ; i += 1) {
-	s = s + ' ';
-    }
-    return s;
+function rewrite (obj, depth) {
+    return null;
 }
 
-function rewrite (tree, depth) {
-    return { rewritten: false, tree: null };
-}
-
-function walk (depth, obj) {
+function walk (obj, depth) {
     var s;
     if (obj) {
-	if (Array.isArray (obj)) {
-	    if (0 < obj.length) {
-		return obj.map (x => { walk (depth, x) }).join ('');
-	    } else {
-		return "";
-	    }
-	} else {
-	    var rw = rewrite (obj, depth);
-	    if (rw.rewritten) {
-		return (rw.tree);
-	    } else {
-		if (obj.node === "_terminal") {
-		    s = spaces (depth);
-		    return `${s}"${obj.primitiveValue}"`;
-		} else {
-		    var spc = `${spaces (depth)}`;
-		    s = `${spc}${obj.node}`;
-		    if (obj.children) {
-			var arr = obj.children.map (x => { return walk (depth + 1, x); });
-			return `${spc}${obj.node}\n${arr.join ('\n')}`;
-		    } else {
-			return `${s}`;
-		    }
-		}
-	    }
-	}
+      if (Array.isArray (obj)) {
+	  if (0 < obj.length) {
+	      return obj.map (x => { return walk (x, depth) });
+	  } else {
+	      return {};
+	  }
+      } else {
+	  var rw = rewrite (obj, depth);
+	  if (rw) {
+	      return rw;
+	  } else {
+	      if (Array.isArray (obj.children)) {
+		  return { node: obj.node, children: obj.children.map (x => { return walk (x, depth + 1); }) };
+	      } else if (obj.children) {
+		  return { node: obj.node, children: obj.children };
+	      } else if (obj.primitiveValue) {
+		  return { node: obj.node, primitiveValue: obj.primitiveValue };
+	      } else {
+		  return { node: obj.node, children: [] };
+	      }
+	  }
+      }
     } else {
-	return "";
+	return {};
     }
 }
 
+
 var tree = readJSONFromStdin ();
-var code = walk (0, tree);
-console.log (code);
-console.log ('emitter done');
+var rw = walk (tree, 0);
+console.log (JSON.stringify (rw));
