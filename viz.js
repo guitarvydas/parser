@@ -17,10 +17,11 @@ function spaces (depth) {
 
 function unparse (depth, obj) {
     var s;
+    debugger;
     if (obj) {
       if (Array.isArray (obj)) {
 	  if (0 < obj.length) {
-	      return obj.map (x => { unparse (depth, x) }).join ('');
+	      return obj.map (x => { return unparse (depth, x) }).join ('\n');
 	  } else {
 	      return "";
 	  }
@@ -47,12 +48,13 @@ function unparse (depth, obj) {
 	  }
       }
     } else {
-	return "[3]";
+	return "";
     }
 }
 
 
 var tree = readJSONFromStdin ();
+//var tree = '{"node":"MatcherStatement","children":[{"node":"Statement","children":[{"node":"Fact","children":[{"node":"Head","children":[{"node":"UnaryHead","children":[{"node":"identifier","children":[{"node":"lowerCaseLetter","children":[{"node":"_terminal","primitiveValue":"l"}]},[{"node":"identLetter","children":[{"node":"lowerCaseLetter","children":[{"node":"_terminal","primitiveValue":"i"}]}]},{"node":"identLetter","children":[{"node":"lowerCaseLetter","children":[{"node":"_terminal","primitiveValue":"n"}]}]},{"node":"identLetter","children":[{"node":"lowerCaseLetter","children":[{"node":"_terminal","primitiveValue":"e"}]}]}]]},{"node":"_terminal","primitiveValue":"("},{"node":"Formal","children":[{"node":"NonaryFunctor","children":[{"node":"identifier","children":[{"node":"lowerCaseLetter","children":[{"node":"_terminal","primitiveValue":"a"}]},[]]}]}]},{"node":"_terminal","primitiveValue":")"}]}]}]},{"node":"_terminal","primitiveValue":";"}]}]}';
 var str = unparse (0, tree);
 console.log (str);
 console.log ('done');
