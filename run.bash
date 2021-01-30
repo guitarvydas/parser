@@ -18,14 +18,19 @@ echo '2----------'
 echo
 node _parser.js ohm.ohm <matcher.scl | node walker-template | node viz
 echo
+
+# echo '3----------'
+# echo
+# node _parser.js ohm.ohm <matcher.scl | node idents | node walker-template | node viz
+# echo
+# echo '4----------'
+# echo
+# node _parser.js ohm.ohm <matcher.scl | node walker-template | node viz
+# node _parser.js ohm.ohm <matcher.scl | node idents2 | node viz
+
 echo '3----------'
 echo
-node _parser.js ohm.ohm <matcher.scl | node idents | node walker-template | node viz
-echo
-echo '4----------'
-echo
-node _parser.js ohm.ohm <matcher.scl | node walker-template | node viz
-# node _parser.js ohm.ohm <matcher.scl | node idents2 | node viz
+node _parser.js ohm.ohm <matcher.scl | node idents2 | node walker-template | node viz
 
 
 #

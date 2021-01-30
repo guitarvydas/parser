@@ -67,7 +67,7 @@ function makeSemantics (grammar) {
 	    lowerCaseLetter: function (_1) { return {node: "lowerCaseLetter", children:[_1.cst ()]}; }, //"a" .. "z"
 	    upperCaseLetter: function (_1) { return {node: "upperCaseLetter", children:[_1.cst ()]}; }, //"A" .. "Z"
 	    identLetter: function (_1) { return {node: "identLetter", children:[_1.cst ()]}; }, //lowerCaseLetter | upperCaseLetter | "0" .. "9" | "_" | "-"
-	    _terminal: function () { return {node: "_terminal", primitiveValue: this.primitiveValue}; }
+	    _terminal: function () { return {node: "_terminal", value: this.primitiveValue}; }
 	});
     return semantics;
 }

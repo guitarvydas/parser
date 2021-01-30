@@ -5,9 +5,19 @@ function readJSONFromStdin () {
     const obj = JSON.parse (jsonText);
     return obj;
 }
+
+//////// rewrite ////////////
+
 function rewrite (obj, depth) {
-    return null;
+    if (obj.node === "identifier") {
+	var str = concatenateIdentToString (obj);
+	return { node: "ident", value: str };
+    } else {
+	return null;
+    }
 }
+
+//////// end rewrite ////////////
 
 function walk (obj, depth) {
     var s;
@@ -43,3 +53,27 @@ function walk (obj, depth) {
 var tree = readJSONFromStdin ();
 var rw = walk (tree, 0);
 console.log (JSON.stringify (rw));
+
+
+/// utilities
+function getTerminal (obj) {
+    if (Array.isArray (obj)) {
+	if (0 >= obj.length) {
+	    return "";
+	} else {
+	    return obj.map (x => getTerminal (x)).join ('');
+	}
+    } else if (obj.node === "_terminal") {
+	return obj.primitiveValue;
+    } else {
+	return obj.children.map (x => getTerminal (x)).join ('');
+    }
+}
+
+function concatenateIdentToString (obj) {
+    // identifier = lowerCaseLetter identLetter*
+    // obj.children = [ {node: identifier ...} , [ {node: "star", children: [{node: identLetter ...}, ... ]} ]]
+    // obj.children = [ {node: identifier ...} , [] ]
+    var str = obj.children.map (x => { return getTerminal (x); }).join ('');
+    return str;
+}

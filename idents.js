@@ -14,7 +14,7 @@ function getTerminal (obj) {
 	    return obj.map (x => getTerminal (x)).join ('');
 	}
     } else if (obj.node === "_terminal") {
-	return obj.primitiveValue;
+	return obj.value;
     } else {
 	return obj.children.map (x => getTerminal (x)).join ('');
     }
