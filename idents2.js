@@ -64,7 +64,7 @@ function getTerminal (obj) {
 	    return obj.map (x => getTerminal (x)).join ('');
 	}
     } else if (obj.node === "_terminal") {
-	return obj.primitiveValue;
+	return obj.value;
     } else {
 	return obj.children.map (x => getTerminal (x)).join ('');
     }
@@ -74,6 +74,12 @@ function concatenateIdentToString (obj) {
     // identifier = lowerCaseLetter identLetter*
     // obj.children = [ {node: identifier ...} , [ {node: "star", children: [{node: identLetter ...}, ... ]} ]]
     // obj.children = [ {node: identifier ...} , [] ]
-    var str = obj.children.map (x => { return getTerminal (x); }).join ('');
+    var str;
+    if (obj.value) {
+	str = obj.value;
+    } else {
+	str = "";
+    };
+    str = str + obj.children.map (x => { return getTerminal (x); }).join ('');
     return str;
 }

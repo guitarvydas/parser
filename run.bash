@@ -28,8 +28,10 @@ echo
 # node _parser.js ohm.ohm <matcher.scl | node walker-template | node viz
 # node _parser.js ohm.ohm <matcher.scl | node idents2 | node viz
 
-echo '3----------'
+echo '5----------'
 echo
+node _parser.js ohm.ohm <matcher.scl >temp0.json
+node _parser.js ohm.ohm <matcher.scl | node idents2 >temp.json
 node _parser.js ohm.ohm <matcher.scl | node idents2 | node walker-template | node viz
 
 
