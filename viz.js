@@ -45,7 +45,6 @@ function unparse (depth, obj) {
 
 
 var tree = readJSONFromStdin ();
-//var tree = '{"node":"MatcherStatement","children":[{"node":"Statement","children":[{"node":"Fact","children":[{"node":"Head","children":[{"node":"UnaryHead","children":[{"node":"identifier","children":[{"node":"lowerCaseLetter","children":[{"node":"_terminal","value":"l"}]},[{"node":"identLetter","children":[{"node":"lowerCaseLetter","children":[{"node":"_terminal","value":"i"}]}]},{"node":"identLetter","children":[{"node":"lowerCaseLetter","children":[{"node":"_terminal","value":"n"}]}]},{"node":"identLetter","children":[{"node":"lowerCaseLetter","children":[{"node":"_terminal","value":"e"}]}]}]]},{"node":"_terminal","value":"("},{"node":"Formal","children":[{"node":"NonaryFunctor","children":[{"node":"identifier","children":[{"node":"lowerCaseLetter","children":[{"node":"_terminal","value":"a"}]},[]]}]}]},{"node":"_terminal","value":")"}]}]}]},{"node":"_terminal","value":";"}]}]}';
 var str = unparse (0, tree);
 console.log (str);
 console.log ('done');

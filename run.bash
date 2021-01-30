@@ -11,10 +11,10 @@ echo
 echo '0----------'
 echo
 node _parser.js ohm.ohm <matcher.scl | node _viz
-# echo
-# echo '1----------'
-# echo
-# node _parser.js ohm.ohm <matcher.scl | node idents | node _viz
+echo
+echo '1----------'
+echo
+node _parser.js ohm.ohm <matcher.scl | node idents | node _viz
 # echo
 # echo '2----------'
 # echo
