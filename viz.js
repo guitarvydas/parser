@@ -25,18 +25,9 @@ function unparse (depth, obj) {
 	  } else {
 	      return "";
 	  }
-      } else if (obj.node === "_terminal") {
+      } else if (isLeafNode (obj)) {
 	  s = spaces (depth);
-	  return `${s}"${obj.primitiveValue}"`;
-      } else if (obj.node === "kw") {
-	  s = spaces (depth);
-	  return `${s}kw[${obj.value}]`;
-      } else if (obj.node === "literal") {
-	  s = spaces (depth);
-	  return `${s}[${obj.value}]`;
-      } else if (obj.node === "logicVar") {
-	  s = spaces (depth);
-	  return `${s}lv[${obj.value}]`;
+	  return `${s}"${obj.value}"`;
       } else {
 	  var spc = `${spaces (depth)}`;
 	  s = `${spc}${obj.node}`;
@@ -54,7 +45,6 @@ function unparse (depth, obj) {
 
 
 var tree = readJSONFromStdin ();
-//var tree = '{"node":"MatcherStatement","children":[{"node":"Statement","children":[{"node":"Fact","children":[{"node":"Head","children":[{"node":"UnaryHead","children":[{"node":"identifier","children":[{"node":"lowerCaseLetter","children":[{"node":"_terminal","primitiveValue":"l"}]},[{"node":"identLetter","children":[{"node":"lowerCaseLetter","children":[{"node":"_terminal","primitiveValue":"i"}]}]},{"node":"identLetter","children":[{"node":"lowerCaseLetter","children":[{"node":"_terminal","primitiveValue":"n"}]}]},{"node":"identLetter","children":[{"node":"lowerCaseLetter","children":[{"node":"_terminal","primitiveValue":"e"}]}]}]]},{"node":"_terminal","primitiveValue":"("},{"node":"Formal","children":[{"node":"NonaryFunctor","children":[{"node":"identifier","children":[{"node":"lowerCaseLetter","children":[{"node":"_terminal","primitiveValue":"a"}]},[]]}]}]},{"node":"_terminal","primitiveValue":")"}]}]}]},{"node":"_terminal","primitiveValue":";"}]}]}';
 var str = unparse (0, tree);
 console.log (str);
 console.log ('done');

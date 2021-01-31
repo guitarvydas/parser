@@ -3,30 +3,10 @@
 # npm install ohm-js
 # npm install fs
 #
-cat parser.js semantics.js >_parser.js
-node _parser.js ohm.ohm <matcher.scl >temp.json #? node --inspect viz <temp.json
-echo
-echo '0----------'
-echo
-node _parser.js ohm.ohm <matcher.scl | node viz
-echo
-echo '1----------'
-echo
-node _parser.js ohm.ohm <matcher.scl | node idents | node viz
-echo
-echo '2----------'
-echo
-node _parser.js ohm.ohm <matcher.scl | node walker-template | node viz
-echo
-echo '3----------'
-echo
-node _parser.js ohm.ohm <matcher.scl | node idents | node walker-template | node viz
-echo
-echo '4----------'
-echo
-node _parser.js ohm.ohm <matcher.scl | node walker-template | node viz
-# node _parser.js ohm.ohm <matcher.scl | node idents2 | node viz
+cat nodes.mjs parser.js semantics.js >_parser.js
+cat nodes.mjs walker-template.js >_walker-template.js
+cat nodes.mjs idents-bootstrap.js >_idents-bootstrap.js
+cat nodes.mjs idents.js >_idents.js
+cat nodes.mjs viz.js >_viz.js
+node _parser.js ohm.ohm <matcher.scl | node _idents | node _walker-template | node _viz
 
-
-#
-# .text
