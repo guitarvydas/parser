@@ -14,5 +14,5 @@ cat nodes.mjs util.js transpiler.js >_transpiler.js
 cat nodes.mjs org.js >_org.js
 
 #
-node _parser.js ohm.ohm <matcher.scl | node _idents | node _org
+node _parser.js ohm.ohm <matcher.scl | node _idents | node _org >_junk.org
 node _parser.js ohm.ohm <matcher.scl | node _idents | node _transpiler

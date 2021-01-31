@@ -37,7 +37,9 @@ function rewrite (obj, depth) {
         //        0     1  2           3
 	if ("Rule" === obj.node) {
 	    var head = walk (obj.children[0], depth + 1);
-	    return `rule (head (${head}), body(...));\n`;
+	    var bodystar = walk (obj.children[2], depth + 1);
+	    var lastbody = walk (obj.children[3], depth + 1);
+	    return `rule (head (${head}), body(<${bodystar}><${lastbody}>));\n`;
         };
 
 	if ("BinaryHead" === obj.node) {
@@ -58,6 +60,10 @@ function rewrite (obj, depth) {
 	if ("logicVar" === obj.node) {
 	    var lvid = digText (obj);
 	    return `lvar("${lvid}")`;
+        };
+
+	if ("kwSucceed" === obj.node) {
+	    return `succeed()`;
         };
 
 	if ("_star"  === obj.node) {
