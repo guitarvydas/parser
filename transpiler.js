@@ -5,6 +5,8 @@ function readJSONFromStdin () {
     const obj = JSON.parse (jsonText);
     return obj;
 }
+
+
 function rewrite (obj, depth) {
     if (isCompositeNode (obj)) {
 
@@ -17,14 +19,16 @@ function rewrite (obj, depth) {
 	// UnaryFact = FactIdentifier "(" FactFormal ")" --> fact1 ($FactIdentifier, functor0 ($FactFormal))
 	if ("UnaryFact" === obj.node) {
             //   obj ~ /[fid] ( [fformal] )/ => `fact1 (${fid}, functor0 (${fformal}));`
-	    console.log (JSON.stringify (obj));
-	    return null;
+	    var fid = dig ("FactIdentifier", obj);
+	    var fformal = dig ("FactFormal");
+	    return `fact1 (${fid}, functor0 (${fformal}));`;
         };
 
 	// NonaryFact = FactIdentifier --> `fact0 ($FactIdentifier)`
 	if ("NonaryFact" === obj.node) {
             //   obj ~ /[fid]/ => `fact0 (${fid});`
-	    console.log (JSON.stringify (obj));
+	    var fid = dig ("FactIdentifier", obj);
+	    return `fact0 (${fid});`;
 	    return null;
         };
 
