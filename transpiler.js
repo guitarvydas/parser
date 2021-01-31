@@ -60,7 +60,13 @@ function rewrite (obj, depth) {
 	    return `lvar("${lvid}")`;
         };
 
-	
+	if ("_star"  === obj.node) {
+	    if (0 >= obj.children.length) {
+		return null;
+	    } else {
+		return obj.children.map (x => { return walk (x, depth); });
+	    }
+	}
 
     };
     return null;
