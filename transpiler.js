@@ -11,10 +11,23 @@ function rewrite (obj, depth) {
 	// ClearStatement --> clear;
 	if ("ClearStatement" === obj.node) {
 	    return "clear;";
-	}
+	};
 
 	// line(x). --> fact1 ("line", functor0 ("a"));
-	//if ("Fact" === obj.node) {
+	// UnaryFact = FactIdentifier "(" FactFormal ")" --> fact1 ($FactIdentifier, functor0 ($FactFormal))
+	if ("UnaryFact" === obj.node) {
+            //   obj ~ /[fid] ( [fformal] )/ => `fact1 (${fid}, functor0 (${fformal}));`
+	    console.log (JSON.stringify (obj));
+	    return null;
+        };
+
+	// NonaryFact = FactIdentifier --> `fact0 ($FactIdentifier)`
+	if ("NonaryFact" === obj.node) {
+            //   obj ~ /[fid]/ => `fact0 (${fid});`
+	    console.log (JSON.stringify (obj));
+	    return null;
+        };
+
     };
     return null;
 }

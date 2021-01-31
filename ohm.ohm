@@ -4,7 +4,7 @@ Matcher {
     
     ClearStatement = "clear"
     Rule = Head "=" (Body "|")* Body
-    Fact = Head
+    Fact = UnaryFact | NonaryHead
     Query = "query" "(" MatchExpression ")"
 
     Subject = Primary
@@ -15,6 +15,13 @@ Matcher {
     UnaryHead = identifier "(" Formal ")"
     NonaryHead = identifier
     Body = MatchExpression
+
+      BinaryFact = FactIdentifier "(" FactFormal "," FactFormal ")"
+      UnaryFact = FactIdentifier "(" FactFormal ")"
+      NonaryFact = FactIdentifier
+
+      FactIdentifier = identifier
+      FactFormal = Formal
 
     Formal = BinaryFunctor | UnaryFunctor | NonaryFunctor | logicVariable | identifier
     MatchExpression = MatchFactor

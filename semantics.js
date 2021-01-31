@@ -68,7 +68,14 @@ function makeSemantics (grammar) {
 	    lowerCaseLetter: function (_1) { return new Composite ("lowerCaseLetter", [_1.cst ()]); }, //"a" .. "z"
 	    upperCaseLetter: function (_1) { return new Composite ("upperCaseLetter", [_1.cst ()]); }, //"A" .. "Z"
 	    identLetter: function (_1) { return new Composite ("identLetter", [_1.cst ()]); }, //lowerCaseLetter | upperCaseLetter | "0" .. "9" | "_" | "-"
-	    _terminal: function () { return new Leaf (this.primitiveValue); }
+	    _terminal: function () { return new Leaf (this.primitiveValue); },
+
+	    // additions
+	    UnaryFact: function (_1, _2, _3, _4) { return new Composite ("UnaryFact", [_1.cst (), _2.cst (), _3.cst (), _4.cst ()]); },
+	    NonaryFact: function (_1) { return new Composite ("NonaryFact", [_1.cst ()] ); },
+	    FactIdentifier: function (_1) { return new Composite ("FactIdentifier", [_1.cst ()]); },
+	    FactFormal: function (_1) { return new Composite ("FactFormal", [_1.cst ()]); },
+	    
 	});
     return semantics;
 }
