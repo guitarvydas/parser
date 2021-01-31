@@ -50,12 +50,11 @@ function rewrite (obj, depth) {
 	    return s;
 	}
 
-	if ("identifier" === obj.node) {
-	    return dig ("identifier", obj.children [0]);
+	if ("NonaryFunctor" === obj.node) {
+	    var v = digText (obj);
+	    return `"${v}"`;
 	}
 
-
-	
 	if ("logicVar" === obj.node) {
 	    var lvid = digText (obj);
 	    return `lvar("${lvid}")`;
