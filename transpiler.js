@@ -37,15 +37,16 @@ function rewrite (obj, depth) {
         //        0     1  2           3
 	if ("Rule" === obj.node) {
 	    var head = walk (obj.children[0], depth + 1);
-	    return `rule (head ("${head}"), body(...));\n`;
+	    return `rule (head (${head}), body(...));\n`;
         };
 
 	if ("BinaryHead" === obj.node) {
 	    // BinaryHead = id "(" Formal "," Formal ")"
 	    //              0   1  2       3  4      5
-	    console.log (obj.children);
-	    var id = dig (obj.children [0]);
-	    var s = `binaryhead /${id}/`;
+	    var id = digText (obj.children [0]);
+	    var f1 = walk (obj.children [2]);
+	    var f2 = walk (obj.children [4]);
+	    var s = `"${id}", ${f1}, ${f2}`;
 	    return s;
 	}
 
@@ -55,8 +56,8 @@ function rewrite (obj, depth) {
 
 
 	
-	if ("LogicVariable" === obj.node) {
-	    var lvid = dig ("LogicVariable", obj);
+	if ("logicVar" === obj.node) {
+	    var lvid = digText (obj);
 	    return `lvar("${lvid}")`;
         };
 

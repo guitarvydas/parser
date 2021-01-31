@@ -45,3 +45,6 @@ function dig (nodeName, obj) {
     return null;
 };
 
+function digText (obj) {
+    return getValue (obj);
+}
