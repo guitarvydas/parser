@@ -12,7 +12,7 @@ function rewrite (obj, depth) {
 
 	// ClearStatement --> clear;
 	if ("ClearStatement" === obj.node) {
-	    return "clear;";
+	    return "clear;\n";
 	};
 
 	// line(x). --> fact1 ("line", functor0 ("a"));
@@ -21,16 +21,46 @@ function rewrite (obj, depth) {
             //   obj ~ /[fid] ( [fformal] )/ => `fact1 (${fid}, functor0 (${fformal}));`
 	    var fid = dig ("FactIdentifier", obj.children[0]);
 	    var fformal = dig ("FactFormal", obj.children[2]);
-	    return `fact1 ("${fid}", functor0 ("${fformal}"));`;
+	    return `fact1 ("${fid}", functor0 ("${fformal}"));\n`;
         };
 
 	// NonaryFact = FactIdentifier --> `fact0 ($FactIdentifier)`
 	if ("NonaryFact" === obj.node) {
             //   obj ~ /[fid]/ => `fact0 (${fid});`
 	    var fid = dig ("FactIdentifier", obj.children[0]);
-	    return `fact0 ("${fid}");`;
+	    return `fact0 ("${fid}");\n`;
 	    return null;
         };
+
+
+	// Rule = Head "=" (Body "|")* Body
+        //        0     1  2           3
+	if ("Rule" === obj.node) {
+	    console.log (obj);
+	    var head = rewrite (obj.children[0], depth + 1);
+	    return `rule (head ("${head}"), body(...));\n`;
+        };
+
+	if ("BinaryHead" == obj.node) {
+	    // BinaryHead = id "(" Formal "," Formal ")"
+	    //              0   1  2       3  4      5
+	    var id = rewrite (obj.children [0], depth + 1);
+	    var s = `head ${s}`;
+	    return s;
+	}
+
+	if ("identifier" == obj.node) {
+	    return dig ("identifier", obj.children [0]);
+	}
+
+
+	
+	if ("LogicVariable" === obj.node) {
+	    var lvid = dig ("LogicVariable", obj);
+	    return `lvar("${lvid}")`;
+        };
+
+	
 
     };
     return null;

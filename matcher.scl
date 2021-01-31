@@ -1,1 +1,3 @@
+clear;
 line(a);
+eq(X,X) = succeed;

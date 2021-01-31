@@ -33,9 +33,6 @@ function getIdent (obj) {
 }
 
 function dig (nodeName, obj) {
-    console.log ();
-    console.log ('dig ' + nodeName);
-    console.log (obj);
     if (isCompositeNode (obj)) {
 	if (nodeName === obj.node) {
 	    var s = getIdent (obj);

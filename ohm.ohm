@@ -16,7 +16,6 @@ Matcher {
     NonaryHead = identifier
     Body = MatchExpression
 
-      BinaryFact = FactIdentifier "(" FactFormal "," FactFormal ")"
       UnaryFact = FactIdentifier "(" FactFormal ")"
       NonaryFact = FactIdentifier
 

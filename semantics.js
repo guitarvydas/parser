@@ -15,7 +15,7 @@ function makeSemantics (grammar) {
 		if (0 < _3.length) {
 		    return new Composite ("Rule", [_1.cst (), _2.cst (), new Composite ("star", [_3, _4]), _5.cst ()]); //Head "=" (Body "|")* Body
 		} else {
-		    return new Composite ("Rule", [_1.cst (), _2.cst (), _5.cst ()]); //Head "=" Body
+		    return new Composite ("Rule", [_1.cst (), _2.cst (), [], _5.cst ()]); //Head "=" Body
 		}
 	    },
 	    Fact: function (_1) {return new Composite ("Fact", [_1.cst ()]); }, //Head
@@ -37,7 +37,7 @@ function makeSemantics (grammar) {
 		if (0 < _1.length) {
 		    return new Composite ("MatchFactor", [new Composite ("star",  [_1, _2]), _3.cst ()]); //(MatchAtom "&")*  MatchAtom
 		} else {
-		    return new Composite ("MatchFactor",  [_3.cst ()]); // MatchAtom
+		    return new Composite ("MatchFactor",  [[], _3.cst ()]); // MatchAtom
 		}
 	    },
 	    MatchAtom: function (_1) { return new Composite ("MatchAtom", [_1.cst ()]); }, //Keyword | BinaryFunctor | UnaryFunctor | NonaryFunctor
@@ -54,7 +54,7 @@ function makeSemantics (grammar) {
 		if (0 < _2sval.length) {
 		    return new Composite ("identifier", [_1.cst (), new Composite ("star",  _2sval)]); //lowerCaseLetter identLetter*
 		} else {
-		    return new Composite ("identifier", [_1.cst ()]);
+		    return new Composite ("identifier", [_1.cst (), []]);
 		}
 	    },
 	    logicVariable: function (_1, _2s) {
@@ -62,7 +62,7 @@ function makeSemantics (grammar) {
 		if (0 < _2sval.length) {
 		    return new Composite ("logicVariable", [_1.cst (), new Composite ("star",  _2sval)]); //lowerCaseLetter identLetter*
 		} else {
-		    return new Composite ("logicVariable", [_1.cst ()]);
+		    return new Composite ("logicVariable", [_1.cst (), []]);
 		}
 	    },
 	    lowerCaseLetter: function (_1) { return new Composite ("lowerCaseLetter", [_1.cst ()]); }, //"a" .. "z"
