@@ -8,14 +8,6 @@ function readJSONFromStdin () {
 
 
 function rewrite (obj, depth) {
-    // if (isCompositeNode (obj)) {
-    // 	console.log ("Composite node = " + obj.node);
-    // } else if (isLeafNode (obj)) {
-    // 	console.log ("Leaf");
-    // 	console.log (obj);
-    // } else {
-    // 	console.log ("not a node");
-    // }
     if (isCompositeNode (obj)) {
 
 	// ClearStatement --> clear;
@@ -44,19 +36,17 @@ function rewrite (obj, depth) {
 	// Rule = Head "=" (Body "|")* Body
         //        0     1  2           3
 	if ("Rule" === obj.node) {
-	    // console.log ("rewriting Rule");
-	    // console.log (obj);
-	    // console.log (obj.children[0]);
-	    var head = rewrite (obj.children[0], depth + 1);
-	    return `rule (head ("${head}"), body(...));\n`;
+	    var head = walk (obj.children[0], depth + 1);
+	    return `rule (head (${head}), body(...));\n`;
         };
 
 	if ("BinaryHead" === obj.node) {
 	    // BinaryHead = id "(" Formal "," Formal ")"
 	    //              0   1  2       3  4      5
-	    // console.log ("rewriting BinaryHead");
-	    var id = rewrite (obj.children [0], depth + 1);
-	    var s = `head ${s}`;
+	    var id = digText (obj.children [0]);
+	    var f1 = walk (obj.children [2]);
+	    var f2 = walk (obj.children [4]);
+	    var s = `"${id}", ${f1}, ${f2}`;
 	    return s;
 	}
 
@@ -66,8 +56,8 @@ function rewrite (obj, depth) {
 
 
 	
-	if ("LogicVariable" === obj.node) {
-	    var lvid = dig ("LogicVariable", obj);
+	if ("logicVar" === obj.node) {
+	    var lvid = digText (obj);
 	    return `lvar("${lvid}")`;
         };
 
@@ -99,7 +89,7 @@ function walk (obj, depth) {
 	  }
       }
     } else {
-	return {};
+	return "";
     }
 }
 
