@@ -6,61 +6,79 @@ function readJSONFromStdin () {
     return obj;
 }
 
-function getTerminal (obj) {
+//////// rewrite ////////////
+
+function rewrite (obj, depth) {
+    if (obj.node === "identifier") {
+	var str = concatenateIdentToString (obj);
+	return new Leaf (str);
+    } else if (obj.node === "logicVariable") {
+	var str = concatenateIdentToString (obj);
+	return new Composite ("logicVar", [new Leaf (str)]);
+    } else {
+	return null;
+    }
+}
+
+//////// end rewrite ////////////
+
+function walk (obj, depth) {
+    var s;
+    if (obj) {
+      if (Array.isArray (obj)) {
+	  if (0 < obj.length) {
+	      return obj.map (x => { return walk (x, depth) });
+	  } else {
+	      return {};
+	  }
+      } else {
+	  var rw = rewrite (obj, depth);
+	  if (rw) {
+	      return rw;
+	  } else {
+	      if (isCompositeNode (obj)) {
+		  return new Composite (obj.node, obj.children.map (x => { return walk (x, depth + 1); }));
+	      } else {
+		  return obj;
+	      }
+	  }
+      }
+    } else {
+	return {};
+    }
+}
+
+
+var tree = readJSONFromStdin ();
+var rw = walk (tree, 0);
+console.log (JSON.stringify (rw));
+
+
+/// utilities
+function getValue (obj) {
     if (Array.isArray (obj)) {
 	if (0 >= obj.length) {
 	    return "";
 	} else {
-	    return obj.map (x => getTerminal (x)).join ('');
+	    return obj.map (x => getValue (x)).join ('');
 	}
-    } else if (obj.node === "_terminal") {
-	return obj.primitiveValue;
+    } else if (obj.node === "_leaf") {
+	return obj.value;
     } else {
-	return obj.children.map (x => getTerminal (x)).join ('');
+	return obj.children.map (x => getValue (x)).join ('');
     }
 }
 
 function concatenateIdentToString (obj) {
     // identifier = lowerCaseLetter identLetter*
-    // obj.children = [ {node: identifier ...} , [ {node: identLetter ...}, ... ] ]
+    // obj.children = [ {node: identifier ...} , [ {node: "star", children: [{node: identLetter ...}, ... ]} ]]
     // obj.children = [ {node: identifier ...} , [] ]
-    var str = obj.children.map (x => { return getTerminal (x); }).join ('');
+    var str;
+    if (obj.value) {
+	str = obj.value;
+    } else {
+	str = "";
+    };
+    str = str + obj.children.map (x => { return getValue (x); }).join ('');
     return str;
 }
-
-function walk_identifiers_and_logicVariables (obj) {
-    if (Array.isArray (obj)) {
-	if (0 >= obj.length) {
-	    return [];
-	} else {
-	    return [ obj.forEach (x => {  return walk_identifiers_and_logicVariables (x) }) ];
-	}
-    } else if (obj.node === "_terminal") {
-	return obj;
-    } else if (obj.node === "Keyword") {
-	var str = concatenateIdentToString (obj);
-	return { node: "kw", value: str };
-    } else if (obj.node === "identifier") {
-	var str = concatenateIdentToString (obj);
-	return { node: "literal", value: str };
-    } else if (obj.node === "logicVariable") {
-	var str = concatenateIdentToString (obj);
-	return { node: "logicVar", value: str };
-    } else {
-	var children;
-	if (obj.children) {
-	    children = obj.children.map (x => { return walk_identifiers_and_logicVariables (x); });
-	}
-	var newNode = { node: obj.node, children: children };
-	return newNode;
-    }
-}
-    
-function rewrite (obj) {
-    return walk_identifiers_and_logicVariables (obj);
-}
-
-
-var jobj = readJSONFromStdin ();
-var rw = rewrite (jobj);
-console.log (JSON.stringify (rw));
