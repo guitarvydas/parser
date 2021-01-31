@@ -24,7 +24,7 @@ function walk (obj, depth) {
 	      return rw;
 	  } else {
 	      if (isCompositeNode (obj)) {
-		  return new CompositeNode (obj.node, obj.children.map (x => {return walk (x, depth + 1)}));
+		  return new Composite (obj.node, obj.children.map (x => {return walk (x, depth + 1)}));
 	      } else {
 		  return obj;
 	      }
