@@ -73,7 +73,7 @@ function walk (obj, depth) {
 	  if (0 < obj.length) {
 	      return obj.map (x => { return walk (x, depth) }).join ('');
 	  } else {
-	      return "";
+	      return null;
 	  }
       } else {
 	  var rw = rewrite (obj, depth);
@@ -83,12 +83,12 @@ function walk (obj, depth) {
 	      if (isCompositeNode (obj)) {
 		  return obj.children.map (x => {return walk (x, depth + 1)}).join ('');
 	      } else {
-		  return "";
+		  return null;
 	      }
 	  }
       }
     } else {
-	return "";
+	return null;
     }
 }
 
