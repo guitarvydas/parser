@@ -39,7 +39,7 @@ function rewrite (obj, depth) {
 	    var head = walk (obj.children[0], depth + 1);
 	    var bodystar = walk (obj.children[2], depth + 1);
 	    var lastbody = walk (obj.children[3], depth + 1);
-	    return `rule (head (${head}), body(<${bodystar}><${lastbody}>));\n`;
+	    return `rule (head (${head}), body(${bodystar}${lastbody}));\n`;
         };
 
 	if ("BinaryHead" === obj.node) {
@@ -50,6 +50,14 @@ function rewrite (obj, depth) {
 	    var f2 = walk (obj.children [4]);
 	    var s = `"${id}", ${f1}, ${f2}`;
 	    return s;
+	}
+
+	if ("MatchFactor" === obj.node ) {
+	    // MatchFactor = (MatchAtom "&")*  MatchAtom
+	    //                0                1
+	    var matchAtomStar = walk (obj.children [0]);
+	    var lastMatchAtom = walk (obj.children [1]);
+	    return `${matchAtomStar}${lastMatchAtom}`;
 	}
 
 	if ("NonaryFunctor" === obj.node) {
