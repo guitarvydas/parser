@@ -19,16 +19,16 @@ function rewrite (obj, depth) {
 	// UnaryFact = FactIdentifier "(" FactFormal ")" --> fact1 ($FactIdentifier, functor0 ($FactFormal))
 	if ("UnaryFact" === obj.node) {
             //   obj ~ /[fid] ( [fformal] )/ => `fact1 (${fid}, functor0 (${fformal}));`
-	    var fid = dig ("FactIdentifier", obj);
-	    var fformal = dig ("FactFormal");
-	    return `fact1 (${fid}, functor0 (${fformal}));`;
+	    var fid = dig ("FactIdentifier", obj.children[0]);
+	    var fformal = dig ("FactFormal", obj.children[2]);
+	    return `fact1 ("${fid}", functor0 ("${fformal}"));`;
         };
 
 	// NonaryFact = FactIdentifier --> `fact0 ($FactIdentifier)`
 	if ("NonaryFact" === obj.node) {
             //   obj ~ /[fid]/ => `fact0 (${fid});`
-	    var fid = dig ("FactIdentifier", obj);
-	    return `fact0 (${fid});`;
+	    var fid = dig ("FactIdentifier", obj.children[0]);
+	    return `fact0 ("${fid}");`;
 	    return null;
         };
 

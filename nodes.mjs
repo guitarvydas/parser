@@ -7,7 +7,7 @@ function Composite (name, children) {
 }
 
 function isNode (obj) {
-    if (obj.node) {
+    if (obj && obj.node) {
 	return obj.children || obj.value;
     } else {
 	return false;
