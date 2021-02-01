@@ -13,9 +13,24 @@ function makeSemantics (grammar) {
 		var _3 = _3s.cst ();
 		var _4 = _4s.cst ();
 		if (0 < _3.length) {
-		    return new Composite ("Rule", [_1.cst (), _2.cst (), new Composite ("_star", [_3, _4]), _5.cst ()]); //Head "=" (Body "|")* Body
+		    //Head "=" (RuleBodyMany "|")* RuleBodyLast
+		    var r = new Composite ("Rule", 
+					  [_1.cst (), 
+					   _2.cst (), 
+					   [new Composite ("_star", makePairs (_3, _4))], 
+					   _5.cst ()
+					  ]);
+		    return r;
 		} else {
-		    return new Composite ("Rule", [_1.cst (), _2.cst (), new Composite ("_star", []), _5.cst ()]); //Head "=" Body
+		    //Head "=" Body
+		    return new Composite ("Rule", 
+					  [
+					      _1.cst (), 
+					      _2.cst (), 
+					      new Composite ("_star", []),
+					      _5.cst ()
+					  ]
+					 ); 
 		}
 	    },
 	    Fact: function (_1) {return new Composite ("Fact", [_1.cst ()]); }, //Head
@@ -32,13 +47,20 @@ function makeSemantics (grammar) {
 	    Formal: function (_1) { return new Composite ("Formal", [_1.cst ()]); }, //BinaryFunctor | UnaryFunctor | NonaryFunctor | logicVariable | identifier
 	    MatchExpression: function (_1) { return new Composite ("MatchExpression", [_1.cst ()]); }, //MatchFactor
 	    MatchFactor: function (_1s, _2s, _3) { 
+		//(MatchAtom "&")*  MatchAtom
 		var _1 = _1s.cst ();
 		var _2 = _2s.cst ();
 		if (0 < _1.length) {
 		    // kludge - each _1 should be paired with each _2
-		    return new Composite ("MatchFactor", [new Composite ("_star", _1), _3.cst ()]); //(MatchAtom "&")*  MatchAtom
+		    return new Composite ("MatchFactor", 
+					  [new Composite ("_star", makePairs (_1, _2))], 
+					  _3.cst ()
+					 );
 		} else {
-		    return new Composite ("MatchFactor",  [new Composite ("_star", []), _3.cst ()]); // MatchAtom
+		    return new Composite ("MatchFactor",  
+					  [new Composite ("_star", [])], 
+					  _3.cst ()
+					 ); // MatchAtom
 		}
 	    },
 	    MatchAtom: function (_1) { return new Composite ("MatchAtom", [_1.cst ()]); }, //Keyword | BinaryFunctor | UnaryFunctor | NonaryFunctor
@@ -82,4 +104,4 @@ function makeSemantics (grammar) {
 	});
     return semantics;
 }
-    
+

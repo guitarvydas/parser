@@ -5,7 +5,7 @@
 #
 
 # includes
-cat nodes.mjs parser.js semantics.js >_parser.js
+cat nodes.mjs util.js parser.js semantics.js >_parser.js
 cat nodes.mjs walker-template.js >_walker-template.js
 cat nodes.mjs idents-bootstrap.js >_idents-bootstrap.js
 cat nodes.mjs util.js idents.js >_idents.js
@@ -16,4 +16,5 @@ cat nodes.mjs org.js >_org.js
 #
 node _parser.js ohm.ohm <matcher.scl >junk.json
 node _parser.js ohm.ohm <matcher.scl | node _idents | node _org >_junk.org
+node _parser.js ohm.ohm <matcher.scl | node _idents >_junk.json
 node _parser.js ohm.ohm <matcher.scl | node _idents | node _transpiler
