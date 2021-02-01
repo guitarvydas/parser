@@ -15,20 +15,28 @@ function rewrite (obj, depth) {
 	}
 	
 	if ("Statement" === obj.node) {
-	    // Statement = (ClearStatement | Query | Rule | Fact) ";"
-	    var stmt = walk (obj.children[0], depth + 1);
-	    return `${stmt};\n`;
+	    // (ClearStatement | Query | Rule | Fact) ";"
+	    // var stmt = walk (obj.children[0], depth + 1);
+	    // return `${stmt};\n`;
+	    return `statement[${walk (obj.children)}]\n`;
 	}
 	
 	// ClearStatement --> clear;
 	if ("ClearStatement" === obj.node) {
-	    return "clear";
+	    // return "clear";
+	    return ""
 	};
 
-	// Rule = Head "=" (RuleBodyMany "|")* RuleBodyLast
-        //        0     1  2           3
+	// Head "=" (RuleBodyMany "|")* RuleBodyLast
+        // 0    1    2*            3*   4
 	if ("Rule" === obj.node) {
-	    return walk (obj.children);
+	    var c0 = walk (obj.children[0]);
+	    var c1 = walk (obj.children[1]);
+	    var c2 = walk (obj.children[2]);
+	    var c3 = walk (obj.children[3]);
+	    var c4 = walk (obj.children[4]);
+	    return `rule[[${c0}][${c1}][${c2}][${c3}][${c4}]]`;
+	    // return `rule[${walk (obj.children)}]`;
 	    // var head = walk (obj.children[0], depth + 1);
 	    // var bodymany = walk (obj.children[2], depth + 1);
 	    // var lastbody = walk (obj.children[3], depth + 1);
@@ -173,10 +181,10 @@ function rewrite (obj, depth) {
 	if ("_star"  === obj.node) {
 	    console.log(obj.children.length);
 	    if (0 >= obj.children.length) {
-		return "#";
+		return "$";
 	    } else {
 		console.log (obj.children);
-		var rArray= obj.children.map (x => { return walk (x, depth) + "$"; });
+		var rArray= obj.children.map (x => { return walk (x, depth) + ""; });
 		return rArray;
 	    }
 	};
@@ -185,7 +193,7 @@ function rewrite (obj, depth) {
 	    return walk (obj.children);
 	};
 	
-	return `?(${obj.node})`;
+	throw `rewrite: ?(${obj.node})`;
 	
     };
 
