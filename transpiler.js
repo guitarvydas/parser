@@ -33,13 +33,17 @@ function rewrite (obj, depth) {
         };
 
 
-	// Rule = Head "=" (Body "|")* Body
+	// Rule = Head "=" (RuleBodyMany "|")* RuleBodyLast
         //        0     1  2           3
 	if ("Rule" === obj.node) {
 	    var head = walk (obj.children[0], depth + 1);
-	    var bodystar = walk (obj.children[2], depth + 1);
+	    var bodymany = walk (obj.children[2], depth + 1);
 	    var lastbody = walk (obj.children[3], depth + 1);
-	    return `rule (head (${head}), body(${bodystar}${lastbody}));\n`;
+	    if (bodymany) {
+		return `rule (head (${head}), body(LOR (${bodymany} ${lastbody})));\n`;
+	    } else {
+		return `rule (head (${head}), body(${lastbody}));\n`;
+	    }
         };
 
 	if ("BinaryHead" === obj.node) {
@@ -57,7 +61,11 @@ function rewrite (obj, depth) {
 	    //                0                1
 	    var matchAtomStar = walk (obj.children [0]);
 	    var lastMatchAtom = walk (obj.children [1]);
-	    return `${matchAtomStar}${lastMatchAtom}`;
+	    if (matchAtomStar) {
+		return `LAND (${matchAtomStar}, ${lastMatchAtom})`;
+	    } else {
+		return `${lastMatchAtom}`;
+	    }
 	}
 
 	if ("NonaryFunctor" === obj.node) {
@@ -67,7 +75,7 @@ function rewrite (obj, depth) {
 
 	if ("logicVar" === obj.node) {
 	    var lvid = digText (obj);
-	    return `lvar("${lvid}")`;
+	    return `lvar ("${lvid}")`;
         };
 
 	if ("Keyword" === obj.node) {
@@ -81,7 +89,7 @@ function rewrite (obj, depth) {
 	    } else {
 		var rArray= obj.children.map (x => { return walk (x, depth); });
 		console.log (Array.isArray (rArray));
-		return rArray.join ('@');
+		return rArray.join (',');
 	    }
 	}
 

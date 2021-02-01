@@ -35,7 +35,8 @@ function makeSemantics (grammar) {
 		var _1 = _1s.cst ();
 		var _2 = _2s.cst ();
 		if (0 < _1.length) {
-		    return new Composite ("MatchFactor", [new Composite ("_star",  [_1, _2]), _3.cst ()]); //(MatchAtom "&")*  MatchAtom
+		    // kludge - each _1 should be paired with each _2
+		    return new Composite ("MatchFactor", [new Composite ("_star", _1), _3.cst ()]); //(MatchAtom "&")*  MatchAtom
 		} else {
 		    return new Composite ("MatchFactor",  [new Composite ("_star", []), _3.cst ()]); // MatchAtom
 		}
@@ -76,8 +77,8 @@ function makeSemantics (grammar) {
 	    FactIdentifier: function (_1) { return new Composite ("FactIdentifier", [_1.cst ()]); },
 	    FactFormal: function (_1) { return new Composite ("FactFormal", [_1.cst ()]); },
 
-	    RuleRepetitiveBody: function (_1) { return _1.cst (); },
-	    RuleFinalBody: function (_1)  { return _1.cst (); }
+	    RuleBodyMany: function (_1) { return new Composite ("RuleBodyMany", [_1.cst ()]); },
+	    RuleBodyLast: function (_1)  { return new Composite ("RuleBodyLast", [_1.cst ()]); }
 	});
     return semantics;
 }
