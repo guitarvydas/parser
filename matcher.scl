@@ -1,1 +1,1 @@
-neq = fail | succeed;
+neq = succeed;

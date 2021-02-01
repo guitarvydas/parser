@@ -17,7 +17,7 @@ function makeSemantics (grammar) {
 		    var r = new Composite ("Rule", 
 					  [_1.cst (), 
 					   _2.cst (), 
-					   [new Composite ("_star", makePairs (_3, _4))], 
+					   new Composite ("_star", makePairs (_3, _4)), 
 					   _5.cst ()
 					  ]);
 		    return r;
@@ -51,16 +51,20 @@ function makeSemantics (grammar) {
 		var _1 = _1s.cst ();
 		var _2 = _2s.cst ();
 		if (0 < _1.length) {
-		    // kludge - each _1 should be paired with each _2
 		    return new Composite ("MatchFactor", 
-					  [new Composite ("_star", makePairs (_1, _2))], 
-					  _3.cst ()
+					  [
+					      new Composite ("_star", makePairs (_1, _2)), 
+					      _3.cst ()
+					  ]
 					 );
 		} else {
-		    return new Composite ("MatchFactor",  
-					  [new Composite ("_star", [])], 
-					  _3.cst ()
+		    var ret = new Composite ("MatchFactor",  
+					  [
+					      new Composite ("_star", []),
+					      _3.cst ()
+					  ], 
 					 ); // MatchAtom
+		    return ret;
 		}
 	    },
 	    MatchAtom: function (_1) { return new Composite ("MatchAtom", [_1.cst ()]); }, //Keyword | BinaryFunctor | UnaryFunctor | NonaryFunctor
