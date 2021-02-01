@@ -70,8 +70,9 @@ function rewrite (obj, depth) {
 	    return `lvar("${lvid}")`;
         };
 
-	if ("kwSucceed" === obj.node) {
-	    return `succeed()`;
+	if ("Keyword" === obj.node) {
+	    var text = digText (obj);
+	    return `${text}`;
         };
 
 	if ("_star"  === obj.node) {
