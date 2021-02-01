@@ -48,3 +48,17 @@ function dig (nodeName, obj) {
 function digText (obj) {
     return getValue (obj);
 }
+
+function makePairs (array1, array2) { // return a single array of double elements
+    if (0 >= array1.length) {
+	return [];
+    } else {
+	var e1 = array1.shift ();
+	var e2 = array2.shift ();
+	if (0 >= array1.length) {
+	    return [[e1, e2]];
+	} else {
+	    return [[e1,e2], makePairs (array1, array2)];
+	}
+    }
+}
