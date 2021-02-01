@@ -1,2 +1,2 @@
 clear;
-neq(P,Q) = a & cut & fail | succeed;
+neq(X,Y) = eq(X,Y) & cut & fail | succeed;

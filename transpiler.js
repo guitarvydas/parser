@@ -10,9 +10,15 @@ function readJSONFromStdin () {
 function rewrite (obj, depth) {
     if (isCompositeNode (obj)) {
 
+	if ("Statement" == obj.node) {
+	    // Statement = (ClearStatement | Query | Rule | Fact) ";"
+	    var stmt = walk (obj.children[0], depth + 1);
+	    return `${stmt}\n`;
+	}
+	
 	// ClearStatement --> clear;
 	if ("ClearStatement" === obj.node) {
-	    return "clear;\n";
+	    return "clear;";
 	};
 
 	// line(x). --> fact1 ("line", functor0 ("a"));
@@ -21,14 +27,14 @@ function rewrite (obj, depth) {
             //   obj ~ /[fid] ( [fformal] )/ => `fact1 (${fid}, functor0 (${fformal}));`
 	    var fid = dig ("FactIdentifier", obj.children[0]);
 	    var fformal = dig ("FactFormal", obj.children[2]);
-	    return `fact1 ("${fid}", functor0 ("${fformal}"));\n`;
+	    return `fact1 ("${fid}", functor0 ("${fformal}"));`;
         };
 
 	// NonaryFact = FactIdentifier --> `fact0 ($FactIdentifier)`
 	if ("NonaryFact" === obj.node) {
             //   obj ~ /[fid]/ => `fact0 (${fid});`
 	    var fid = dig ("FactIdentifier", obj.children[0]);
-	    return `fact0 ("${fid}");\n`;
+	    return `fact0 ("${fid}");`;
 	    return null;
         };
 
@@ -40,7 +46,7 @@ function rewrite (obj, depth) {
 	    var bodymany = walk (obj.children[2], depth + 1);
 	    var lastbody = walk (obj.children[3], depth + 1);
 	    if (bodymany) {
-		return `rule (head (${head}), body(LOR (${bodymany} ${lastbody})));\n`;
+		return `rule (head (${head}), body(LOR (${bodymany}, ${lastbody})));\n`;
 	    } else {
 		return `rule (head (${head}), body(${lastbody}));\n`;
 	    }
@@ -88,8 +94,7 @@ function rewrite (obj, depth) {
 		return null;
 	    } else {
 		var rArray= obj.children.map (x => { return walk (x, depth); });
-		console.log (Array.isArray (rArray));
-		return rArray.join (',');
+		return rArray;
 	    }
 	}
 
@@ -102,7 +107,7 @@ function walk (obj, depth) {
     if (obj) {
       if (Array.isArray (obj)) {
 	  if (0 < obj.length) {
-	      return obj.map (x => { return walk (x, depth) }).join ('');
+	      return obj.map (x => { return walk (x, depth) });
 	  } else {
 	      return null;
 	  }
@@ -112,7 +117,7 @@ function walk (obj, depth) {
 	      return rw;
 	  } else {
 	      if (isCompositeNode (obj)) {
-		  return obj.children.map (x => {return walk (x, depth + 1)}).join ('');
+		  return obj.children.map (x => {return walk (x, depth + 1)});
 	      } else {
 		  return null;
 	      }
@@ -126,4 +131,4 @@ function walk (obj, depth) {
 
 var tree = readJSONFromStdin ();
 var transpiledString = walk (tree, 0);
-console.log (transpiledString);
+console.log (transpiledString.join (''));
