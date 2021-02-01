@@ -18,7 +18,7 @@ function rewrite (obj, depth) {
 	    // (ClearStatement | Query | Rule | Fact) ";"
 	    // var stmt = walk (obj.children[0], depth + 1);
 	    // return `${stmt};\n`;
-	    return `statement[${walk (obj.children)}]\n`;
+	    return `statement[${walk (obj.children[0])}]\n`;
 	}
 	
 	// ClearStatement --> clear;
@@ -28,14 +28,13 @@ function rewrite (obj, depth) {
 	};
 
 	// Head "=" (RuleBodyMany "|")* RuleBodyLast
-        // 0    1    2*            3*   4
+        // 0    1    2*                 3
 	if ("Rule" === obj.node) {
 	    var c0 = walk (obj.children[0]);
 	    var c1 = walk (obj.children[1]);
 	    var c2 = walk (obj.children[2]);
 	    var c3 = walk (obj.children[3]);
-	    var c4 = walk (obj.children[4]);
-	    return `rule[[${c0}][${c1}][${c2}][${c3}][${c4}]]`;
+	    return `rule[[${c0}][${c1}][${c2}][${c3}]]`;
 	    // return `rule[${walk (obj.children)}]`;
 	    // var head = walk (obj.children[0], depth + 1);
 	    // var bodymany = walk (obj.children[2], depth + 1);
@@ -198,7 +197,8 @@ function rewrite (obj, depth) {
     };
 
     if (isLeafNode (obj)) {
-	return "%";
+	return obj.value;
+	//return "%";
     };
     
 	console.log (obj);

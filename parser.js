@@ -1,11 +1,20 @@
 var fs = require ('fs');
 var ohm = require ('ohm-js');
 
+
+function getSCLSource (fname) {
+    if (fname === undefined || fname === null || fname === "-") {
+	return fs.readFileSync (0, 'utf-8');  // SCL <== DSL but more specific
+    } else {
+	return fs.readFileSync (fname);
+    }	
+}
+
 function main () {
     var argv = process.argv.slice (1);
     grammarPath = argv [1];
     var grammarSource = fs.readFileSync (grammarPath, 'utf8');
-    var sclSource = fs.readFileSync (0, 'utf-8');  // SCL <== DSL but more specific
+    var sclSource = getSCLSource (argv [2]);
     var grammar = ohm.grammar (grammarSource);
     const parseTree = grammar.match (sclSource);
     if (parseTree.failed ()) {

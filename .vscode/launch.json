@@ -12,7 +12,8 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/_transpiler.js"
+            "program": "${workspaceFolder}/_parser.js",
+            "args": [ "ohm.ohm","matcher.scl"]
         }
     ]
 }
