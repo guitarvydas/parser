@@ -75,7 +75,9 @@ function makeSemantics (grammar) {
 	    NonaryFact: function (_1) { return new Composite ("NonaryFact", [_1.cst ()] ); },
 	    FactIdentifier: function (_1) { return new Composite ("FactIdentifier", [_1.cst ()]); },
 	    FactFormal: function (_1) { return new Composite ("FactFormal", [_1.cst ()]); },
-	    
+
+	    RuleRepetitiveBody: function (_1) { return _1.cst (); },
+	    RuleFinalBody: function (_1)  { return _1.cst (); }
 	});
     return semantics;
 }

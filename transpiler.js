@@ -72,14 +72,16 @@ function rewrite (obj, depth) {
 
 	if ("Keyword" === obj.node) {
 	    var text = digText (obj);
-	    return `${text}`;
+	    return `${text} ()`;
         };
 
 	if ("_star"  === obj.node) {
 	    if (0 >= obj.children.length) {
 		return null;
 	    } else {
-		return obj.children.map (x => { return walk (x, depth); });
+		var rArray= obj.children.map (x => { return walk (x, depth); });
+		console.log (Array.isArray (rArray));
+		return rArray.join ('@');
 	    }
 	}
 

@@ -3,7 +3,7 @@ Matcher {
     Statement = (ClearStatement | Query | Rule | Fact) ";"
     
     ClearStatement = "clear"
-    Rule = Head "=" (Body "|")* Body
+    Rule = Head "=" (RuleRepetitiveBody "|")* RuleFinalBody
     Fact = UnaryFact | NonaryHead
     Query = "query" "(" MatchExpression ")"
 
@@ -21,6 +21,9 @@ Matcher {
 
       FactIdentifier = identifier
       FactFormal = Formal
+
+      RuleRepetitiveBody = Body
+      RuleFinalBody = Body
 
     Formal = BinaryFunctor | UnaryFunctor | NonaryFunctor | logicVariable | identifier
     MatchExpression = MatchFactor
