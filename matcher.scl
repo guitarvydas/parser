@@ -1,4 +1,2 @@
 clear;
-line(a);
-eq(d,X) = succeed;
-eq(d,X) = hello & succeed;
+neq(X,Y) = eq(X,Y) & cut & fail | succeed;
