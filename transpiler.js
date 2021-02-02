@@ -34,7 +34,37 @@ function rewrite (obj, depth) {
 		    return `rule (head (${head}), body(${lastbody}))`;
 		}
             };
+
+	    if ("BinaryHead" === obj.node) {
+		// identifier "(" Formal "," Formal ")"
+		// 0          1   2      3   4      5
+		var c0 = walk (obj.children[0], depth + 1);
+		var c1 = walk (obj.children[1], depth + 1);
+		var c2 = walk (obj.children[2], depth + 1);
+		var c3 = walk (obj.children[3], depth + 1);
+		var c4 = walk (obj.children[4], depth + 1);
+		var c5 = walk (obj.children[5], depth + 1);
+		return `head2 ("${c0}", ${c2}, ${c4})`;
+	    };
 	    
+	    if ("UnaryHead" === obj.node) {
+		// identifier "(" Formal ")"
+		// 0          1   2      3
+		var c0 = walk (obj.children[0], depth + 1);
+		var c1 = walk (obj.children[1], depth + 1);
+		var c2 = walk (obj.children[2], depth + 1);
+		var c3 = walk (obj.children[3], depth + 1);
+		return `head1 ("${c0}", ${c2})`;
+	    };
+	    
+	    if ("NonaryHead" === obj.node) {
+		// identifier
+		// 0         
+		var c0 = walk (obj.children[0], depth + 1);
+		return `head0 ("${c0}")`;
+	    };
+	    
+
 	    // line(x). --> fact1 ("line", functor0 ("a"));
 	    // UnaryFact = FactIdentifier "(" FactFormal ")" --> fact1 ($FactIdentifier, functor0 ($FactFormal))
 	    if ("UnaryFact" === obj.node) {
@@ -56,7 +86,7 @@ function rewrite (obj, depth) {
 
 	    if ("BinaryFunctor" === obj.node) {
 		// BinaryFunctor = id "(" Formal "," Formal ")"
-		//              0   1  2       3  4      5
+		//                 0   1  2       3  4      5
 		var id = digText (obj.children [0]);
 		var f1 = walk (obj.children [2]);
 		var f2 = walk (obj.children [4]);
