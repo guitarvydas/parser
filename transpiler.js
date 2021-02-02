@@ -47,8 +47,22 @@ function rewrite (obj, depth) {
 		return s;
 	    }
 
-
+	    if ("logicVar" === obj.node) {
+		var lvid = digText (obj);
+		return `lvar ("${lvid}")`;
+            };
+	    
+	    if ("Keyword" === obj.node) {
+		var text = digText (obj);
+		return `${text} ()`;
+            };
+	    
 	}
+
+
+	//
+	// debug - raw walk, no rewriting
+	//
 
 	if ("MatcherStatement" === obj.node) {
 	    return walk (obj.children);
