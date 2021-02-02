@@ -3,11 +3,7 @@ var ohm = require ('ohm-js');
 
 
 function getSCLSource (fname) {
-    if (fname === undefined || fname === null || fname === "-") {
-	return fs.readFileSync (0, 'utf-8');  // SCL <== DSL but more specific
-    } else {
-	return fs.readFileSync (fname);
-    }	
+    return getNamedFile (fname);
 }
 
 function main () {
