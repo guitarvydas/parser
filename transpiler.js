@@ -312,11 +312,7 @@ function rewrite (obj, depth) {
 		return "$";
 	    } else {
 		var rArray= obj.children.map (x => { return walk (x, depth) + ""; });
-		if (0 >= rArray.length) {
-		    return rArray;
-		} else {
-		    return "#";
-		}
+		return rArray;
 	    }
 	};
 

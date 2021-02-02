@@ -62,3 +62,11 @@ function makePairs (array1, array2) { // return a single array of double element
 	}
     }
 }
+
+function getNamedFile (fname) {
+    if (fname === undefined || fname === null || fname === "-") {
+	return fs.readFileSync (0, 'utf-8');
+    } else {
+	return fs.readFileSync (fname);
+    }	
+}
