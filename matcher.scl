@@ -1,1 +1,2 @@
-neq = succeed;
+clear;
+line(a);
