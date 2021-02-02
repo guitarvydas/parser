@@ -17,6 +17,23 @@ function rewrite (obj, depth) {
 	    if ("Statement" === obj.node) {
 		return `${walk (obj.children[0])};\n`;
 	    }
+
+	    // Head "=" (RuleBodyMany "|")* RuleBodyLast
+            // 0    1    2*                 3
+	    if ("Rule" === obj.node) {
+		var c0 = walk (obj.children[0], depth + 1);
+		var c1 = walk (obj.children[1], depth + 1);
+		var c2 = walk (obj.children[2], depth + 1);
+		var c3 = walk (obj.children[3], depth + 1);
+		var head = c0;
+		var bodymany = c2;
+		var lastbody = c3;
+		if (bodymany) {
+		    return `rule (head (${head}), body(LOR (${bodymany}, ${lastbody})))`;
+		} else {
+		    return `rule (head (${head}), body(${lastbody}))`;
+		}
+            };
 	    
 	    // line(x). --> fact1 ("line", functor0 ("a"));
 	    // UnaryFact = FactIdentifier "(" FactFormal ")" --> fact1 ($FactIdentifier, functor0 ($FactFormal))
@@ -43,7 +60,24 @@ function rewrite (obj, depth) {
 		var id = digText (obj.children [0]);
 		var f1 = walk (obj.children [2]);
 		var f2 = walk (obj.children [4]);
-		var s = `"${id}", ${f1}, ${f2}`;
+		var s = `functor2 ("${id}", ${f1}, ${f2})`;
+		return s;
+	    }
+
+	    if ("UnaryFunctor" === obj.node) {
+		// BinaryFunctor = id "(" Formal ")"
+		//                 0   1  2       3
+		var id = digText (obj.children [0]);
+		var f1 = walk (obj.children [2]);
+		var s = `functor1 ("${id}", ${f1})`;
+		return s;
+	    }
+
+	    if ("NonaryFunctor" === obj.node) {
+		// BinaryFunctor = id
+		//                 0
+		var id = digText (obj.children [0]);
+		var s = `functor0 ("${id}")`;
 		return s;
 	    }
 
@@ -73,6 +107,7 @@ function rewrite (obj, depth) {
 		var v = digText (obj);
 		return `"${v}"`;
 	    }
+
 	}
 
 
@@ -109,15 +144,6 @@ function rewrite (obj, depth) {
 	    var c2 = walk (obj.children[2]);
 	    var c3 = walk (obj.children[3]);
 	    return `rule[[${c0}][${c1}][${c2}][${c3}]]`;
-	    // return `rule[${walk (obj.children)}]`;
-	    // var head = walk (obj.children[0], depth + 1);
-	    // var bodymany = walk (obj.children[2], depth + 1);
-	    // var lastbody = walk (obj.children[3], depth + 1);
-	    // if (bodymany) {
-	    // 	return `rule (head (${head}), body(LOR (${bodymany}, ${lastbody})))`;
-	    // } else {
-	    // 	return `rule (head (${head}), body(${lastbody}))`;
-	    // }
         };
 
 	if ("Fact" === obj.node) {
@@ -140,11 +166,11 @@ function rewrite (obj, depth) {
 	    return walk (obj.children);
 	};
 
-	if ("UniaryHead" === obj.node) {
+	if ("BinaryHead" === obj.node) {
 	    return walk (obj.children);
 	};
 
-	if ("BinaryHead" === obj.node) {
+	if ("UnaryHead" === obj.node) {
 	    return walk (obj.children);
 	};
 
