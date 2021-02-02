@@ -56,7 +56,19 @@ function rewrite (obj, depth) {
 		var text = digText (obj);
 		return `${text} ()`;
             };
-	    
+
+	    if ("MatchFactor" === obj.node ) {
+		// MatchFactor = (MatchAtom "&")*  MatchAtom
+		//                0          1     2
+		var matchAtomStar = walk (obj.children [0]);
+		var lastMatchAtom = walk (obj.children [2]);
+		if (matchAtomStar) {
+		    return `LAND (${matchAtomStar}, ${lastMatchAtom})`;
+		} else {
+		    return `${lastMatchAtom}`;
+		}
+	    }
+
 	}
 
 
