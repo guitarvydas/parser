@@ -69,6 +69,10 @@ function rewrite (obj, depth) {
 		}
 	    }
 
+	    if ("NonaryFunctor" === obj.node) {
+		var v = digText (obj);
+		return `"${v}"`;
+	    }
 	}
 
 
