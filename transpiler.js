@@ -29,9 +29,9 @@ function rewrite (obj, depth) {
 		var bodymany = c2;
 		var lastbody = c3;
 		if (bodymany) {
-		    return `rule (head (${head}), body(LOR (${bodymany}, ${lastbody})))`;
+		    return `rule (${head}, body (LOR (${bodymany}, ${lastbody})))`;
 		} else {
-		    return `rule (head (${head}), body(${lastbody}))`;
+		    return `rule (${head}, body (${lastbody}))`;
 		}
             };
 
@@ -312,7 +312,11 @@ function rewrite (obj, depth) {
 		return "$";
 	    } else {
 		var rArray= obj.children.map (x => { return walk (x, depth) + ""; });
-		return rArray;
+		if (0 >= rArray.length) {
+		    return rArray;
+		} else {
+		    return "#";
+		}
 	    }
 	};
 
