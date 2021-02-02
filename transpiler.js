@@ -1,5 +1,7 @@
 const fs = require ('fs');
 
+const debug = false;
+
 function readJSONFromStdin () {
     var jsonText = fs.readFileSync (0, 'utf-8'); 
     const obj = JSON.parse (jsonText);
@@ -10,6 +12,44 @@ function readJSONFromStdin () {
 function rewrite (obj, depth) {
     if (isCompositeNode (obj)) {
 
+	if (!debug) {
+
+	    if ("Statement" === obj.node) {
+		return `${walk (obj.children[0])};\n`;
+	    }
+	    
+	    // line(x). --> fact1 ("line", functor0 ("a"));
+	    // UnaryFact = FactIdentifier "(" FactFormal ")" --> fact1 ($FactIdentifier, functor0 ($FactFormal))
+	    if ("UnaryFact" === obj.node) {
+		//   obj ~ /[fid] ( [fformal] )/ => `fact1 (${fid}, functor0 (${fformal}));`
+		var fid = dig ("FactIdentifier", obj.children[0]);
+		var fformal = dig ("FactFormal", obj.children[2]);
+		return `fact1 ("${fid}", functor0 ("${fformal}"))`;
+            };
+
+	    // NonaryFact = FactIdentifier --> `fact0 ($FactIdentifier)`
+	    if ("NonaryFact" === obj.node) {
+		//   obj ~ /[fid]/ => `fact0 (${fid});`
+		var fid = dig ("FactIdentifier", obj.children[0]);
+		return `fact0 ("${fid}")`;
+		return null;
+            };
+
+
+
+	    if ("BinaryFunctor" === obj.node) {
+		// BinaryFunctor = id "(" Formal "," Formal ")"
+		//              0   1  2       3  4      5
+		var id = digText (obj.children [0]);
+		var f1 = walk (obj.children [2]);
+		var f2 = walk (obj.children [4]);
+		var s = `"${id}", ${f1}, ${f2}`;
+		return s;
+	    }
+
+
+	}
+
 	if ("MatcherStatement" === obj.node) {
 	    return walk (obj.children);
 	}
@@ -18,7 +58,11 @@ function rewrite (obj, depth) {
 	    // (ClearStatement | Query | Rule | Fact) ";"
 	    // var stmt = walk (obj.children[0], depth + 1);
 	    // return `${stmt};\n`;
-	    return `statement[${walk (obj.children[0])}]\n`;
+	    if (debug) {
+		return `statement[${walk (obj.children[0])}]\n`;
+	    } else {
+		return `${walk (obj.children[0])};\n`;
+	    }
 	}
 	
 	// ClearStatement --> clear;
