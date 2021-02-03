@@ -3,8 +3,11 @@ const fs = require ('fs');
 const debug = false;
 
 function readJSON (fname) {
-    return getNamedFile (fname);
+    var text =  getNamedFile (fname);
+    const obj = JSON.parse (text);
+    return obj;
 }
+
 
 
 function rewrite (obj, depth) {
@@ -121,9 +124,9 @@ function rewrite (obj, depth) {
 
 	    if ("MatchFactor" === obj.node ) {
 		// MatchFactor = (MatchAtom "&")*  MatchAtom
-		//                0          1     2
+		//                0                1
 		var matchAtomStar = walk (obj.children [0]);
-		var lastMatchAtom = walk (obj.children [2]);
+		var lastMatchAtom = walk (obj.children [1]);
 		if (matchAtomStar) {
 		    return `LAND (${matchAtomStar}, ${lastMatchAtom})`;
 		} else {
@@ -307,7 +310,7 @@ function rewrite (obj, depth) {
 
 	if ("_star"  === obj.node) {
 	    if (0 >= obj.children.length) {
-		return "$";
+		return null;
 	    } else {
 		var rArray= obj.children.map (x => { return walk (x, depth) + ""; });
 		return rArray;
@@ -331,9 +334,6 @@ function rewrite (obj, depth) {
 }
 
 function walk (obj, depth) {
-    console.log();
-    console.log (obj);
-    console.log();
     var s;
     if (obj) {
       if (Array.isArray (obj)) {
@@ -360,7 +360,7 @@ function walk (obj, depth) {
 }
 
 
-var tree = readJSON ('-');
-console.log (tree);
+var argv = process.argv.slice (1);
+var tree = readJSON (argv[1]);
 var transpiledString = walk (tree, 0);
-console.log (transpiledString);
+console.log (transpiledString.join (''));

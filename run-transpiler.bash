@@ -21,4 +21,4 @@ node _parser.js ohm.ohm <matcher.scl | node _idents >_scanned.json
 node _parser.js ohm.ohm <matcher.scl | node _idents | node _org >_scanned.org
 #node _parser.js ohm.ohm <matcher.scl | node _idents | node _transpiler
 node _parser.js ohm.ohm <matcher.scl | node _idents >_parsed.json
-node _transpiler <_parsed.json
+node _transpiler _parsed.json
