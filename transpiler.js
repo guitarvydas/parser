@@ -2,10 +2,8 @@ const fs = require ('fs');
 
 const debug = false;
 
-function readJSONFromStdin () {
-    var jsonText = fs.readFileSync (0, 'utf-8'); 
-    const obj = JSON.parse (jsonText);
-    return obj;
+function readJSON (fname) {
+    return getNamedFile (fname);
 }
 
 
@@ -333,6 +331,9 @@ function rewrite (obj, depth) {
 }
 
 function walk (obj, depth) {
+    console.log();
+    console.log (obj);
+    console.log();
     var s;
     if (obj) {
       if (Array.isArray (obj)) {
@@ -359,6 +360,7 @@ function walk (obj, depth) {
 }
 
 
-var tree = readJSONFromStdin ();
+var tree = readJSON ('-');
+console.log (tree);
 var transpiledString = walk (tree, 0);
-console.log (transpiledString.join (''));
+console.log (transpiledString);

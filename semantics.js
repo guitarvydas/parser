@@ -5,7 +5,7 @@ function makeSemantics (grammar) {
     semantics.addOperation(
 	'cst',
 	{
-	    MatcherStatement: function (_1s) { return new Composite ("MatcherStatement", _1s.cst ()); }, //Statement+
+	    MatcherStatement: function (statement) { return new Composite ("MatcherStatement", statement.cst ()); }, //Statement+
 	    Statement: function (_1, _2) { return new Composite ("Statement", [_1.cst (), _2.cst ()]); }, //(ClearStatement | Query | Rule | Fact) ";"
 
 	    ClearStatement: function (_1) { return new Composite ("ClearStatement",[_1.cst ()]); }, //"clear"
