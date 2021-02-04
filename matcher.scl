@@ -1,3 +1,1 @@
-clear;
-line(a);
-eq(d,X) = succeed;
+eq(X,X) = succeed;

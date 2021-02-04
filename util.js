@@ -48,3 +48,26 @@ function dig (nodeName, obj) {
 function digText (obj) {
     return getValue (obj);
 }
+
+function makePairs (array1, array2) { // return a single array of double elements
+    if (0 >= array1.length) {
+	return [];
+    } else {
+	var e1 = array1.shift ();
+	var e2 = array2.shift ();
+	if (0 >= array1.length) {
+	    return [[e1, e2]];
+	} else {
+	    return [[e1,e2], makePairs (array1, array2)];
+	}
+    }
+}
+
+function getNamedFile (fname) {
+    if (fname === undefined || fname === null || fname === "-") {
+	return fs.readFileSync (0, 'utf-8');
+    } else {
+	return fs.readFileSync (fname, 'utf-8');
+    }	
+}
+

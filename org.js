@@ -47,4 +47,3 @@ function unparse (depth, obj) {
 var tree = readJSONFromStdin ();
 var str = unparse (1, tree);
 console.log (str);
-console.log ('done');
