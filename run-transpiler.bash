@@ -14,7 +14,11 @@ cat nodes.mjs util.js transpiler.js >_transpiler.js
 cat nodes.mjs org.js >_org.js
 
 #
-node _parser.js ohm.ohm <matcher.scl >junk.json
-node _parser.js ohm.ohm <matcher.scl | node _idents | node _org >_junk.org
-node _parser.js ohm.ohm <matcher.scl | node _idents >_junk.json
-node _parser.js ohm.ohm <matcher.scl | node _idents | node _transpiler
+#node _parser.js ohm.ohm <matcher.scl >_scanned0.json
+# node _parser.js ohm.ohm matcher.scl
+node _parser.js ohm.ohm matcher.scl >_scanned0.json
+node _parser.js ohm.ohm <matcher.scl | node _idents >_scanned.json
+node _parser.js ohm.ohm <matcher.scl | node _idents | node _org >_scanned.org
+#node _parser.js ohm.ohm <matcher.scl | node _idents | node _transpiler
+node _parser.js ohm.ohm <matcher.scl | node _idents >_parsed.json
+node _transpiler _parsed.json

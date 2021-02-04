@@ -1,2 +1,1 @@
-clear;
-neq = fail | succeed;
+eq(X,X) = succeed;
