@@ -5,18 +5,31 @@ function makeSemantics (grammar) {
     semantics.addOperation(
 	'cst',
 	{
-	    MatcherStatement: function (_1s) { return new Composite ("MatcherStatement", _1s.cst ()); }, //Statement+
+	    MatcherStatement: function (statement) { return new Composite ("MatcherStatement", statement.cst ()); }, //Statement+
 	    Statement: function (_1, _2) { return new Composite ("Statement", [_1.cst (), _2.cst ()]); }, //(ClearStatement | Query | Rule | Fact) ";"
 
 	    ClearStatement: function (_1) { return new Composite ("ClearStatement",[_1.cst ()]); }, //"clear"
-	    Rule: function (_1, _2, _3s, _4s, _5) {
+	    Rule: function (_1, _2, _3) {
+		// Rule = Head "=" (RuleBodyTwoOrMore | RuleBodySingle)
+		//        1    2   3
+		return new Composite ("Rule", [_1.cst (), _2.cst (), _3.cst ()]);
+	    },
+	    RuleBodyTwoOrMore: function (_1, _2s, _3s) {
+		// RuleBodyTwoOrMore = Body ("|" Body)+
+		//                     1     2s  3s
+		var _1 = _1.cst ();
+		var _2 = _2s.cst ();
 		var _3 = _3s.cst ();
-		var _4 = _4s.cst ();
-		if (0 < _3.length) {
-		    return new Composite ("Rule", [_1.cst (), _2.cst (), new Composite ("star", [_3, _4]), _5.cst ()]); //Head "=" (Body "|")* Body
-		} else {
-		    return new Composite ("Rule", [_1.cst (), _2.cst (), _5.cst ()]); //Head "=" Body
-		}
+		var r = new Composite ("RuleBodyTwoOrMore", 
+				       [_1,
+					new Composite ("_star", makePairs (_2, _3))
+				       ]);
+		return r;
+	    },
+	    RuleBodySingle: function (_1) {
+		// RuleBodySingle = Body
+		//                  1
+		return new Composite ("RuleBodySingle", [_1.cst ()]);
 	    },
 	    Fact: function (_1) {return new Composite ("Fact", [_1.cst ()]); }, //Head
 	    Query: function (_1, _2, _3, _4) { return new Composite ("Query", [_1.cst (), _2.cst (), _3.cst (), _4.cst ()]); }, //"query" "(" MatchExpression ")"
@@ -31,14 +44,26 @@ function makeSemantics (grammar) {
 
 	    Formal: function (_1) { return new Composite ("Formal", [_1.cst ()]); }, //BinaryFunctor | UnaryFunctor | NonaryFunctor | logicVariable | identifier
 	    MatchExpression: function (_1) { return new Composite ("MatchExpression", [_1.cst ()]); }, //MatchFactor
-	    MatchFactor: function (_1s, _2s, _3) { 
+	    MatchFactor: function (_1) {
+		// MatchFactor = (MatchFactorOneOrMore | MatchFactorSingle)
+		return new Composite ("MatchFactor", [_1.cst ()]);
+	    },
+	    MatchFactorTwoOrMore: function (_1s, _2s, _3) { 
+		// MatchFactorOneOrMore = (MatchAtom "&")*  MatchAtom
+		//                        1s         2s     3
 		var _1 = _1s.cst ();
 		var _2 = _2s.cst ();
-		if (0 < _1.length) {
-		    return new Composite ("MatchFactor", [new Composite ("star",  [_1, _2]), _3.cst ()]); //(MatchAtom "&")*  MatchAtom
-		} else {
-		    return new Composite ("MatchFactor",  [_3.cst ()]); // MatchAtom
-		}
+		var _3 = _3.cst ();
+		return new Composite ("MatchFactorTwoOrMore", 
+				      [
+					  new Composite ("_star", makePairs (_1, _2)), 
+					  _3.cst ()
+				      ]
+				     );
+	    },
+	    MatchFactorSingle: function (_1) {
+		//MatchFactorSingle = MatchAtom
+		return new Composite ("MatchFactorSingle", [_1.cst ()]);
 	    },
 	    MatchAtom: function (_1) { return new Composite ("MatchAtom", [_1.cst ()]); }, //Keyword | BinaryFunctor | UnaryFunctor | NonaryFunctor
 	    Keyword: function (_1) { return new Composite ("Keyword", [_1.cst ()]); }, //kwCut | kwSucceed | kwFail
@@ -52,24 +77,31 @@ function makeSemantics (grammar) {
 	    identifier: function (_1, _2s) {
 		var _2sval = _2s.cst ();
 		if (0 < _2sval.length) {
-		    return new Composite ("identifier", [_1.cst (), new Composite ("star",  _2sval)]); //lowerCaseLetter identLetter*
+		    return new Composite ("identifier", [_1.cst (), new Composite ("_star",  _2sval)]); //lowerCaseLetter identLetter*
 		} else {
-		    return new Composite ("identifier", [_1.cst ()]);
+		    return new Composite ("identifier", [_1.cst (), new Composite ("_star", [])]);
 		}
 	    },
 	    logicVariable: function (_1, _2s) {
 		var _2sval = _2s.cst ();
 		if (0 < _2sval.length) {
-		    return new Composite ("logicVariable", [_1.cst (), new Composite ("star",  _2sval)]); //lowerCaseLetter identLetter*
+		    return new Composite ("logicVariable", [_1.cst (), new Composite ("_star",  _2sval)]); //lowerCaseLetter identLetter*
 		} else {
-		    return new Composite ("logicVariable", [_1.cst ()]);
+		    return new Composite ("logicVariable", [_1.cst (), new Composite ("_star", [])]);
 		}
 	    },
 	    lowerCaseLetter: function (_1) { return new Composite ("lowerCaseLetter", [_1.cst ()]); }, //"a" .. "z"
 	    upperCaseLetter: function (_1) { return new Composite ("upperCaseLetter", [_1.cst ()]); }, //"A" .. "Z"
 	    identLetter: function (_1) { return new Composite ("identLetter", [_1.cst ()]); }, //lowerCaseLetter | upperCaseLetter | "0" .. "9" | "_" | "-"
-	    _terminal: function () { return new Leaf (this.primitiveValue); }
+	    _terminal: function () { return new Leaf (this.primitiveValue); },
+
+	    // additions
+	    UnaryFact: function (_1, _2, _3, _4) { return new Composite ("UnaryFact", [_1.cst (), _2.cst (), _3.cst (), _4.cst ()]); },
+	    NonaryFact: function (_1) { return new Composite ("NonaryFact", [_1.cst ()] ); },
+	    FactIdentifier: function (_1) { return new Composite ("FactIdentifier", [_1.cst ()]); },
+	    FactFormal: function (_1) { return new Composite ("FactFormal", [_1.cst ()]); },
+
 	});
     return semantics;
 }
-    
+

@@ -3,8 +3,10 @@ Matcher {
     Statement = (ClearStatement | Query | Rule | Fact) ";"
     
     ClearStatement = "clear"
-    Rule = Head "=" (Body "|")* Body
-    Fact = Head
+    Rule = Head "=" (RuleBodyTwoOrMore | RuleBodySingle)
+      RuleBodyTwoOrMore = Body ("|" Body)+
+      RuleBodySingle = Body
+    Fact = UnaryFact | NonaryHead
     Query = "query" "(" MatchExpression ")"
 
     Subject = Primary
@@ -16,9 +18,18 @@ Matcher {
     NonaryHead = identifier
     Body = MatchExpression
 
+      UnaryFact = FactIdentifier "(" FactFormal ")"
+      NonaryFact = FactIdentifier
+
+      FactIdentifier = identifier
+      FactFormal = Formal
+
+
     Formal = BinaryFunctor | UnaryFunctor | NonaryFunctor | logicVariable | identifier
     MatchExpression = MatchFactor
-    MatchFactor = (MatchAtom "&")*  MatchAtom
+    MatchFactor = (MatchFactorTwoOrMore | MatchFactorSingle)
+      MatchFactorTwoOrMore =  MatchAtom ("&" MatchAtom)+
+      MatchFactorSingle = MatchAtom
     MatchAtom = Keyword | BinaryFunctor | UnaryFunctor | NonaryFunctor
     Keyword = kwCut | kwSucceed | kwFail
     kwCut = "cut"

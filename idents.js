@@ -53,32 +53,3 @@ var tree = readJSONFromStdin ();
 var rw = walk (tree, 0);
 console.log (JSON.stringify (rw));
 
-
-/// utilities
-function getValue (obj) {
-    if (Array.isArray (obj)) {
-	if (0 >= obj.length) {
-	    return "";
-	} else {
-	    return obj.map (x => getValue (x)).join ('');
-	}
-    } else if (obj.node === "_leaf") {
-	return obj.value;
-    } else {
-	return obj.children.map (x => getValue (x)).join ('');
-    }
-}
-
-function concatenateIdentToString (obj) {
-    // identifier = lowerCaseLetter identLetter*
-    // obj.children = [ {node: identifier ...} , [ {node: "star", children: [{node: identLetter ...}, ... ]} ]]
-    // obj.children = [ {node: identifier ...} , [] ]
-    var str;
-    if (obj.value) {
-	str = obj.value;
-    } else {
-	str = "";
-    };
-    str = str + obj.children.map (x => { return getValue (x); }).join ('');
-    return str;
-}

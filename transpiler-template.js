@@ -1,22 +1,15 @@
 const fs = require ('fs');
 
-const debug = false;
-//const debug = true;
-
-function readJSON (fname) {
-    var text =  getNamedFile (fname);
-    const obj = JSON.parse (text);
+function readJSONFromStdin () {
+    var jsonText = fs.readFileSync (0, 'utf-8'); 
+    const obj = JSON.parse (jsonText);
     return obj;
 }
 
 
-
 function rewrite (obj, depth) {
     if (isCompositeNode (obj)) {
-	//
-	// debug - raw walk, no rewriting
-	//
-	
+
 	if ("MatcherStatement" === obj.node) {
 	    return walk (obj.children);
 	}
@@ -25,11 +18,7 @@ function rewrite (obj, depth) {
 	    // (ClearStatement | Query | Rule | Fact) ";"
 	    // var stmt = walk (obj.children[0], depth + 1);
 	    // return `${stmt};\n`;
-	    if (debug) {
-		return `statement[${walk (obj.children[0])}]\n`;
-	    } else {
-		return `${walk (obj.children[0])};\n`;
-	    }
+	    return `statement[${walk (obj.children[0])}]\n`;
 	}
 	
 	// ClearStatement --> clear;
@@ -38,30 +27,24 @@ function rewrite (obj, depth) {
 	    return ""
 	};
 
-	// Rule = Head "=" (RuleBodyOneOrMore | RuleBodySingle)
-	//        0    1   2
+	// Head "=" (RuleBodyMany "|")* RuleBodyLast
+        // 0    1    2*                 3
 	if ("Rule" === obj.node) {
 	    var c0 = walk (obj.children[0]);
 	    var c1 = walk (obj.children[1]);
 	    var c2 = walk (obj.children[2]);
-	    if (debug) {
-		return `rule[${c0},${c1},${c2}]`;
-	    } else {
-		return `${c0}, ${c2}`;
-	    }
+	    var c3 = walk (obj.children[3]);
+	    return `rule[[${c0}][${c1}][${c2}][${c3}]]`;
+	    // return `rule[${walk (obj.children)}]`;
+	    // var head = walk (obj.children[0], depth + 1);
+	    // var bodymany = walk (obj.children[2], depth + 1);
+	    // var lastbody = walk (obj.children[3], depth + 1);
+	    // if (bodymany) {
+	    // 	return `rule (head (${head}), body(LOR (${bodymany}, ${lastbody})))`;
+	    // } else {
+	    // 	return `rule (head (${head}), body(${lastbody}))`;
+	    // }
         };
-
-	// RuleBodyOneOrMore "=" (RuleBodyMany "|")* RuleBodyLast
-        //                   0    1*                 2
-	if ("RuleBodyOneOrMore" === obj.node) {
-	    return walk (obj.children, depth + 1);
-        };
-	// RuleBodySingle "=" RuleBodyLast
-        //                0   1
-	if ("RuleBodySingle" === obj.node) {
-	    return walk (obj.children, depth + 1);
-        };
-
 
 	if ("Fact" === obj.node) {
 	    return walk (obj.children);
@@ -80,14 +63,14 @@ function rewrite (obj, depth) {
 	};
 
 	if ("Head" === obj.node) {
-	    return `head[${walk (obj.children)}]`;
-	};
-
-	if ("BinaryHead" === obj.node) {
 	    return walk (obj.children);
 	};
 
-	if ("UnaryHead" === obj.node) {
+	if ("UniaryHead" === obj.node) {
+	    return walk (obj.children);
+	};
+
+	if ("BinaryHead" === obj.node) {
 	    return walk (obj.children);
 	};
 
@@ -96,7 +79,7 @@ function rewrite (obj, depth) {
 	};
 
 	if ("Body" === obj.node) {
-	    return `body[${walk (obj.children)}]`;
+	    return walk (obj.children);
 	};
 
 	if ("Formal" === obj.node) {
@@ -107,25 +90,6 @@ function rewrite (obj, depth) {
 	    return walk (obj.children);
 	};
 
-	if ("MatchFactor" === obj.node ) {
-	    return walk (obj.children);
-	};
-
-	if ("MatchFactorOneOrMore" === obj.node ) {
-	    if (debug) {
-		return walk (obj.children);
-	    } else {
-		return `${walk (obj.children[0])}, ${walk (obj.children[1])}`;
-	    }
-	};
-	if ("MatchFactorSingle" === obj.node ) {
-	    if (debug) {
-		return walk (obj.children);
-	    } else {
-		return `${walk (obj.children[0])}`;
-	    }
-	};
-	
 	if ("MatchFactor" === obj.node) {
 	    return walk (obj.children);
 	};
@@ -135,12 +99,7 @@ function rewrite (obj, depth) {
 	};
 
 	if ("Keyword" === obj.node) {
-	    if (debug) {
-		return walk (obj.children);
-	    } else {
-		var text = digText (obj);
-		return `${text} ()`;
-	    }
+	    return walk (obj.children);
 	};
 
 	if ("kwCut" === obj.node) {
@@ -176,12 +135,7 @@ function rewrite (obj, depth) {
 	};
 
 	if ("logicVariable" === obj.node) {
-	    if (debug) {
-		return walk (obj.children);
-	    } else {
-		var lvid = digText (obj);
-		return `lvar ("${lvid}")`;
-	    }
+	    return walk (obj.children);
 	};
 
 	if ("lowerCaseLetter" === obj.node) {
@@ -225,7 +179,7 @@ function rewrite (obj, depth) {
 
 	if ("_star"  === obj.node) {
 	    if (0 >= obj.children.length) {
-		return null;
+		return "$";
 	    } else {
 		var rArray= obj.children.map (x => { return walk (x, depth) + ""; });
 		return rArray;
@@ -239,7 +193,7 @@ function rewrite (obj, depth) {
 	throw `rewrite: ?(${obj.node})`;
 	
     };
-    
+
     if (isLeafNode (obj)) {
 	return obj.value;
 	//return "%";
@@ -275,7 +229,6 @@ function walk (obj, depth) {
 }
 
 
-var argv = process.argv.slice (1);
-var tree = readJSON (argv[1]);
+var tree = readJSONFromStdin ();
 var transpiledString = walk (tree, 0);
 console.log (transpiledString.join (''));
