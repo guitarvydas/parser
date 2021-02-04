@@ -1,150 +1,22 @@
 const fs = require ('fs');
 
 const debug = false;
+//const debug = true;
 
-function readJSONFromStdin () {
-    var jsonText = fs.readFileSync (0, 'utf-8'); 
-    const obj = JSON.parse (jsonText);
+function readJSON (fname) {
+    var text =  getNamedFile (fname);
+    const obj = JSON.parse (text);
     return obj;
 }
 
 
+
 function rewrite (obj, depth) {
     if (isCompositeNode (obj)) {
-
-	if (!debug) {
-
-	    if ("Statement" === obj.node) {
-		return `${walk (obj.children[0])};\n`;
-	    }
-
-	    // Head "=" (RuleBodyMany "|")* RuleBodyLast
-            // 0    1    2*                 3
-	    if ("Rule" === obj.node) {
-		var c0 = walk (obj.children[0], depth + 1);
-		var c1 = walk (obj.children[1], depth + 1);
-		var c2 = walk (obj.children[2], depth + 1);
-		var c3 = walk (obj.children[3], depth + 1);
-		var head = c0;
-		var bodymany = c2;
-		var lastbody = c3;
-		if (bodymany) {
-		    return `rule (${head}, body (LOR (${bodymany}, ${lastbody})))`;
-		} else {
-		    return `rule (${head}, body (${lastbody}))`;
-		}
-            };
-
-	    if ("BinaryHead" === obj.node) {
-		// identifier "(" Formal "," Formal ")"
-		// 0          1   2      3   4      5
-		var c0 = walk (obj.children[0], depth + 1);
-		var c1 = walk (obj.children[1], depth + 1);
-		var c2 = walk (obj.children[2], depth + 1);
-		var c3 = walk (obj.children[3], depth + 1);
-		var c4 = walk (obj.children[4], depth + 1);
-		var c5 = walk (obj.children[5], depth + 1);
-		return `head2 ("${c0}", ${c2}, ${c4})`;
-	    };
-	    
-	    if ("UnaryHead" === obj.node) {
-		// identifier "(" Formal ")"
-		// 0          1   2      3
-		var c0 = walk (obj.children[0], depth + 1);
-		var c1 = walk (obj.children[1], depth + 1);
-		var c2 = walk (obj.children[2], depth + 1);
-		var c3 = walk (obj.children[3], depth + 1);
-		return `head1 ("${c0}", ${c2})`;
-	    };
-	    
-	    if ("NonaryHead" === obj.node) {
-		// identifier
-		// 0         
-		var c0 = walk (obj.children[0], depth + 1);
-		return `head0 ("${c0}")`;
-	    };
-	    
-
-	    // line(x). --> fact1 ("line", functor0 ("a"));
-	    // UnaryFact = FactIdentifier "(" FactFormal ")" --> fact1 ($FactIdentifier, functor0 ($FactFormal))
-	    if ("UnaryFact" === obj.node) {
-		//   obj ~ /[fid] ( [fformal] )/ => `fact1 (${fid}, functor0 (${fformal}));`
-		var fid = dig ("FactIdentifier", obj.children[0]);
-		var fformal = dig ("FactFormal", obj.children[2]);
-		return `fact1 ("${fid}", functor0 ("${fformal}"))`;
-            };
-
-	    // NonaryFact = FactIdentifier --> `fact0 ($FactIdentifier)`
-	    if ("NonaryFact" === obj.node) {
-		//   obj ~ /[fid]/ => `fact0 (${fid});`
-		var fid = dig ("FactIdentifier", obj.children[0]);
-		return `fact0 ("${fid}")`;
-		return null;
-            };
-
-
-
-	    if ("BinaryFunctor" === obj.node) {
-		// BinaryFunctor = id "(" Formal "," Formal ")"
-		//                 0   1  2       3  4      5
-		var id = digText (obj.children [0]);
-		var f1 = walk (obj.children [2]);
-		var f2 = walk (obj.children [4]);
-		var s = `functor2 ("${id}", ${f1}, ${f2})`;
-		return s;
-	    }
-
-	    if ("UnaryFunctor" === obj.node) {
-		// BinaryFunctor = id "(" Formal ")"
-		//                 0   1  2       3
-		var id = digText (obj.children [0]);
-		var f1 = walk (obj.children [2]);
-		var s = `functor1 ("${id}", ${f1})`;
-		return s;
-	    }
-
-	    if ("NonaryFunctor" === obj.node) {
-		// BinaryFunctor = id
-		//                 0
-		var id = digText (obj.children [0]);
-		var s = `functor0 ("${id}")`;
-		return s;
-	    }
-
-	    if ("logicVar" === obj.node) {
-		var lvid = digText (obj);
-		return `lvar ("${lvid}")`;
-            };
-	    
-	    if ("Keyword" === obj.node) {
-		var text = digText (obj);
-		return `${text} ()`;
-            };
-
-	    if ("MatchFactor" === obj.node ) {
-		// MatchFactor = (MatchAtom "&")*  MatchAtom
-		//                0          1     2
-		var matchAtomStar = walk (obj.children [0]);
-		var lastMatchAtom = walk (obj.children [2]);
-		if (matchAtomStar) {
-		    return `LAND (${matchAtomStar}, ${lastMatchAtom})`;
-		} else {
-		    return `${lastMatchAtom}`;
-		}
-	    }
-
-	    if ("NonaryFunctor" === obj.node) {
-		var v = digText (obj);
-		return `"${v}"`;
-	    }
-
-	}
-
-
 	//
 	// debug - raw walk, no rewriting
 	//
-
+	
 	if ("MatcherStatement" === obj.node) {
 	    return walk (obj.children);
 	}
@@ -166,15 +38,30 @@ function rewrite (obj, depth) {
 	    return ""
 	};
 
-	// Head "=" (RuleBodyMany "|")* RuleBodyLast
-        // 0    1    2*                 3
+	// Rule = Head "=" (RuleBodyOneOrMore | RuleBodySingle)
+	//        0    1   2
 	if ("Rule" === obj.node) {
 	    var c0 = walk (obj.children[0]);
 	    var c1 = walk (obj.children[1]);
 	    var c2 = walk (obj.children[2]);
-	    var c3 = walk (obj.children[3]);
-	    return `rule[[${c0}][${c1}][${c2}][${c3}]]`;
+	    if (debug) {
+		return `rule[${c0},${c1},${c2}]`;
+	    } else {
+		return `${c0}, ${c2}`;
+	    }
         };
+
+	// RuleBodyOneOrMore "=" (RuleBodyMany "|")* RuleBodyLast
+        //                   0    1*                 2
+	if ("RuleBodyOneOrMore" === obj.node) {
+	    return walk (obj.children, depth + 1);
+        };
+	// RuleBodySingle "=" RuleBodyLast
+        //                0   1
+	if ("RuleBodySingle" === obj.node) {
+	    return walk (obj.children, depth + 1);
+        };
+
 
 	if ("Fact" === obj.node) {
 	    return walk (obj.children);
@@ -193,7 +80,7 @@ function rewrite (obj, depth) {
 	};
 
 	if ("Head" === obj.node) {
-	    return walk (obj.children);
+	    return `head[${walk (obj.children)}]`;
 	};
 
 	if ("BinaryHead" === obj.node) {
@@ -209,7 +96,7 @@ function rewrite (obj, depth) {
 	};
 
 	if ("Body" === obj.node) {
-	    return walk (obj.children);
+	    return `body[${walk (obj.children)}]`;
 	};
 
 	if ("Formal" === obj.node) {
@@ -220,6 +107,25 @@ function rewrite (obj, depth) {
 	    return walk (obj.children);
 	};
 
+	if ("MatchFactor" === obj.node ) {
+	    return walk (obj.children);
+	};
+
+	if ("MatchFactorOneOrMore" === obj.node ) {
+	    if (debug) {
+		return walk (obj.children);
+	    } else {
+		return `${walk (obj.children[0])}, ${walk (obj.children[1])}`;
+	    }
+	};
+	if ("MatchFactorSingle" === obj.node ) {
+	    if (debug) {
+		return walk (obj.children);
+	    } else {
+		return `${walk (obj.children[0])}`;
+	    }
+	};
+	
 	if ("MatchFactor" === obj.node) {
 	    return walk (obj.children);
 	};
@@ -229,7 +135,12 @@ function rewrite (obj, depth) {
 	};
 
 	if ("Keyword" === obj.node) {
-	    return walk (obj.children);
+	    if (debug) {
+		return walk (obj.children);
+	    } else {
+		var text = digText (obj);
+		return `${text} ()`;
+	    }
 	};
 
 	if ("kwCut" === obj.node) {
@@ -265,7 +176,12 @@ function rewrite (obj, depth) {
 	};
 
 	if ("logicVariable" === obj.node) {
-	    return walk (obj.children);
+	    if (debug) {
+		return walk (obj.children);
+	    } else {
+		var lvid = digText (obj);
+		return `lvar ("${lvid}")`;
+	    }
 	};
 
 	if ("lowerCaseLetter" === obj.node) {
@@ -309,7 +225,7 @@ function rewrite (obj, depth) {
 
 	if ("_star"  === obj.node) {
 	    if (0 >= obj.children.length) {
-		return "$";
+		return null;
 	    } else {
 		var rArray= obj.children.map (x => { return walk (x, depth) + ""; });
 		return rArray;
@@ -323,7 +239,7 @@ function rewrite (obj, depth) {
 	throw `rewrite: ?(${obj.node})`;
 	
     };
-
+    
     if (isLeafNode (obj)) {
 	return obj.value;
 	//return "%";
@@ -359,6 +275,7 @@ function walk (obj, depth) {
 }
 
 
-var tree = readJSONFromStdin ();
+var argv = process.argv.slice (1);
+var tree = readJSON (argv[1]);
 var transpiledString = walk (tree, 0);
 console.log (transpiledString.join (''));

@@ -1,7 +1,6 @@
 var fs = require ('fs');
 var ohm = require ('ohm-js');
 
-
 function getSCLSource (fname) {
     return getNamedFile (fname);
 }

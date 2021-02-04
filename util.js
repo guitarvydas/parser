@@ -67,6 +67,7 @@ function getNamedFile (fname) {
     if (fname === undefined || fname === null || fname === "-") {
 	return fs.readFileSync (0, 'utf-8');
     } else {
-	return fs.readFileSync (fname);
+	return fs.readFileSync (fname, 'utf-8');
     }	
 }
+

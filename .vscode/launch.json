@@ -5,15 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "debug _transpiler.js",
-            "type": "pwa-node",
+            "name": "_transpiler",
+            "program": "${workspaceFolder}/_transpiler.js",
             "request": "launch",
-            "name": "Launch Program",
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/_parser.js",
-            "args": [ "ohm.ohm","matcher.scl"]
+            "type": "pwa-node",
+            "args": [ "_parsed.json"]
         }
     ]
-}
