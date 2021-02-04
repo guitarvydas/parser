@@ -1,1 +1,1 @@
-neq = cut & fail | succeed;
+eq(X,X) = succeed;
