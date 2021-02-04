@@ -1,5 +1,3 @@
-// include './nodes.js'
-
 function makeSemantics (grammar) {
     const semantics = grammar.createSemantics ();
     semantics.addOperation(
@@ -14,22 +12,22 @@ function makeSemantics (grammar) {
 		//        1    2   3
 		return new Composite ("Rule", [_1.cst (), _2.cst (), _3.cst ()]);
 	    },
-	    RuleBodyTwoOrMore: function (_1, _2s, _3s) {
-		// RuleBodyTwoOrMore = Body ("|" Body)+
-		//                     1     2s  3s
+	    RuleBodyTwoOrMore: function (_1, _2s) {
+		// RuleBodyTwoOrMore = Body RuleBodyTail+
+		//                     1    2s
 		var _1 = _1.cst ();
 		var _2 = _2s.cst ();
-		var _3 = _3s.cst ();
-		var r = new Composite ("RuleBodyTwoOrMore", 
-				       [_1,
-					new Composite ("_star", makePairs (_2, _3))
-				       ]);
+		var r = new Composite ("RuleBodyTwoOrMore", [_1, _2]);
 		return r;
 	    },
 	    RuleBodySingle: function (_1) {
 		// RuleBodySingle = Body
 		//                  1
 		return new Composite ("RuleBodySingle", [_1.cst ()]);
+	    },
+	    RuleBodyTail: function (_1, _2) {
+		// RuleBodyTail = "|" Body
+		return new Composite ("RuleBodyTail", [_1.cst (), _2.cst ()]);
 	    },
 	    Fact: function (_1) {return new Composite ("Fact", [_1.cst ()]); }, //Head
 	    Query: function (_1, _2, _3, _4) { return new Composite ("Query", [_1.cst (), _2.cst (), _3.cst (), _4.cst ()]); }, //"query" "(" MatchExpression ")"
@@ -48,22 +46,21 @@ function makeSemantics (grammar) {
 		// MatchFactor = (MatchFactorOneOrMore | MatchFactorSingle)
 		return new Composite ("MatchFactor", [_1.cst ()]);
 	    },
-	    MatchFactorTwoOrMore: function (_1s, _2s, _3) { 
-		// MatchFactorOneOrMore = (MatchAtom "&")*  MatchAtom
-		//                        1s         2s     3
-		var _1 = _1s.cst ();
+	    MatchFactorTwoOrMore: function (_1, _2s) { 
+		// MatchFactorTwoOrMore =  MatchAtom MatchFactorTail+
+		//                         1         2s
+		var _1 = _1.cst ();
 		var _2 = _2s.cst ();
-		var _3 = _3.cst ();
-		return new Composite ("MatchFactorTwoOrMore", 
-				      [
-					  new Composite ("_star", makePairs (_1, _2)), 
-					  _3.cst ()
-				      ]
-				     );
+		return new Composite ("MatchFactorTwoOrMore", [_1, _2]);
 	    },
 	    MatchFactorSingle: function (_1) {
 		//MatchFactorSingle = MatchAtom
 		return new Composite ("MatchFactorSingle", [_1.cst ()]);
+	    },
+	    MatchFactorTail: function (_1, _2) {
+		//MatchFactorTail = "&" MatchAtom
+		//                  1   2
+		return new Composite ("MatchFactorTail", [_1.cst (), _2.cst ()]);
 	    },
 	    MatchAtom: function (_1) { return new Composite ("MatchAtom", [_1.cst ()]); }, //Keyword | BinaryFunctor | UnaryFunctor | NonaryFunctor
 	    Keyword: function (_1) { return new Composite ("Keyword", [_1.cst ()]); }, //kwCut | kwSucceed | kwFail
