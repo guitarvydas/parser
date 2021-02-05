@@ -4,7 +4,8 @@ Matcher {
     
     ClearStatement = "clear"
     Rule = Head "=" (RuleBodyTwoOrMore | RuleBodySingle)
-      RuleBodyTwoOrMore = Body ("|" Body)+
+      RuleBodyTwoOrMore = Body RuleBodyTail+
+      RuleBodyTail = "|" Body
       RuleBodySingle = Body
     Fact = UnaryFact | NonaryHead
     Query = "query" "(" MatchExpression ")"
@@ -28,7 +29,8 @@ Matcher {
     Formal = BinaryFunctor | UnaryFunctor | NonaryFunctor | logicVariable | identifier
     MatchExpression = MatchFactor
     MatchFactor = (MatchFactorTwoOrMore | MatchFactorSingle)
-      MatchFactorTwoOrMore =  MatchAtom ("&" MatchAtom)+
+      MatchFactorTwoOrMore = MatchAtom MatchFactorTail+
+      MatchFactorTail = "&" MatchAtom
       MatchFactorSingle = MatchAtom
     MatchAtom = Keyword | BinaryFunctor | UnaryFunctor | NonaryFunctor
     Keyword = kwCut | kwSucceed | kwFail

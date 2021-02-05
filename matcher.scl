@@ -1,1 +1,1 @@
-eq(X,X) = succeed;
+eq1(X,Y) = fail & succeed & fail | cut;
