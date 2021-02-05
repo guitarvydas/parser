@@ -1,4 +1,3 @@
-
 /// utilities
 function getValue (obj) {
     if (Array.isArray (obj)) {
@@ -61,13 +60,5 @@ function makePairs (array1, array2) { // return a single array of double element
 	    return [[e1,e2], makePairs (array1, array2)];
 	}
     }
-}
-
-function getNamedFile (fname) {
-    if (fname === undefined || fname === null || fname === "-") {
-	return fs.readFileSync (0, 'utf-8');
-    } else {
-	return fs.readFileSync (fname, 'utf-8');
-    }	
 }
 

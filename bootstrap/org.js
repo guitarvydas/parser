@@ -1,5 +1,3 @@
-const fs = require ('fs');
-
 function readJSONFromStdin () {
     var jsonText = fs.readFileSync (0, 'utf-8'); 
     const obj = JSON.parse (jsonText);

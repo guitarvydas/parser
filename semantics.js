@@ -74,17 +74,17 @@ function makeSemantics (grammar) {
 	    identifier: function (_1, _2s) {
 		var _2sval = _2s.cst ();
 		if (0 < _2sval.length) {
-		    return new Composite ("identifier", [_1.cst (), new Composite ("_star",  _2sval)]); //lowerCaseLetter identLetter*
+		    return new Composite ("identifier", [_1.cst (), new Composite ("_collection",  _2sval)]); //lowerCaseLetter identLetter*
 		} else {
-		    return new Composite ("identifier", [_1.cst (), new Composite ("_star", [])]);
+		    return new Composite ("identifier", [_1.cst (), new Composite ("_collection", [])]);
 		}
 	    },
 	    logicVariable: function (_1, _2s) {
 		var _2sval = _2s.cst ();
 		if (0 < _2sval.length) {
-		    return new Composite ("logicVariable", [_1.cst (), new Composite ("_star",  _2sval)]); //lowerCaseLetter identLetter*
+		    return new Composite ("logicVariable", [_1.cst (), new Composite ("_collection",  _2sval)]); //lowerCaseLetter identLetter*
 		} else {
-		    return new Composite ("logicVariable", [_1.cst (), new Composite ("_star", [])]);
+		    return new Composite ("logicVariable", [_1.cst (), new Composite ("_collection", [])]);
 		}
 	    },
 	    lowerCaseLetter: function (_1) { return new Composite ("lowerCaseLetter", [_1.cst ()]); }, //"a" .. "z"
