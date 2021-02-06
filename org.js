@@ -14,7 +14,6 @@ function viz (obj, depth, fn) {
     } else if (isCompositeNode (obj)) {
         var s = spaces (depth);
         var w = walk (obj.children, depth + 1, fn);
-	console.log (w);
         return `\n${s} ${obj.node}${w}`;
     } else {
         throw "internal error in viz";
@@ -23,7 +22,6 @@ function viz (obj, depth, fn) {
 
 var argv = process.argv.slice (1);
 var JSONtree = getJSON (argv[1]);
-console.log(JSONtree);
 var s = walk (JSONtree, 1, viz);
 console.log (s);
 
