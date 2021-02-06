@@ -5,6 +5,16 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "_viz2",
+            "program": "${workspaceFolder}/_viz2.js",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node",
+            "args": [ "_scanned.json"]
+        },
+        {
             "name": "_transpiler",
             "program": "${workspaceFolder}/_transpiler.js",
             "request": "launch",
@@ -13,5 +23,4 @@
             ],
             "type": "pwa-node",
             "args": [ "_parsed.json"]
-        }
-    ]
+        } ]

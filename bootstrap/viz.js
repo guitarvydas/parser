@@ -1,5 +1,3 @@
-const fs = require ('fs');
-
 function readJSONFromStdin () {
     var jsonText = fs.readFileSync (0, 'utf-8'); 
     const obj = JSON.parse (jsonText);
@@ -15,18 +13,19 @@ function spaces (depth) {
     return s;
 }
 
-function emitTree (depth, obj) {
+function unparse (depth, obj) {
     var s;
     debugger;
     if (obj) {
 	if (Array.isArray (obj)) {
 	    if (0 < obj.length) {
-		return obj.map (x => { return emitTree (depth, x) }).join ('\n');
+		return obj.map (x => { return unparse (depth, x) }).join ('\n');
 	    } else {
 		return "";
 	    }
 	} else if (isLeafNode (obj)) {
-	    // nothing
+	    s = spaces (depth);
+	    return `${s}"${obj.value}"`;
 	} else if (isEmitNode (obj)) {
 	    s = spaces (depth);
 	    return `${s}'${obj.value}'`;
@@ -34,18 +33,19 @@ function emitTree (depth, obj) {
 	    var spc = `${spaces (depth)}`;
 	    s = `${spc}${obj.node}`;
 	    if (obj.children) {
-		var arr = obj.children.map (x => { return emitTree (depth + 1, x); });
+		var arr = obj.children.map (x => { return unparse (depth + 1, x); });
+		return `${spc}${obj.node}\n${arr.join ('\n')}`;
 	    } else {
-		// nothing
+		return `${s}`;
 	    }
 	}
     } else {
-	// nothing
+	return "";
     }
 }
 
 
 var tree = readJSONFromStdin ();
-var str = emitTree (0, tree);
+var str = unparse (0, tree);
 console.log (str);
 console.log ('done');
